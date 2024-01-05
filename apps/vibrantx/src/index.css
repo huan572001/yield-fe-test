@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-style: normal;
+    font-weight: normal;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+.dot-active {
+  border-radius: 50%;
+  margin-right: 8px;
+  height: 8px;
+  width: 8px;
+  transform: scale(1);
+  background: #53ba95;
+  box-shadow: 0 0 0 0 #53ba95;
+  animation-name: dot-animate;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes dot-animate {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(83, 186, 149, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(83, 186, 149, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(83, 186, 149, 0);
+  }
+}
+
+.bg-text-gradient {
+  background: linear-gradient(99deg, #655cff -1.87%, #2caca0 96.68%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.border-gradient {
+  background: linear-gradient(99deg, #8781e7 5%, #a4ecea 96.68%);
+  padding: 1px;
+  border-radius: 24px;
+  opacity: 0.8;
+}
+.boxed-gradient-child {
+  height: 100%;
+  background-color: white;
+  border-radius: inherit;
+}
+.bg-gradient-footer {
+  background: linear-gradient(
+    93deg,
+    #9c97ff 4.51%,
+    #2e93b6 74.85%,
+    #0064d9 124.12%
+  );
+}
+.accordion-content-out {
+  max-height: 0 !important;
+  transition: max-height 0.5s ease-out;
+  overflow: hidden;
+}
+.accordion-content-in {
+  max-height: 200px !important;
+  transition: max-height 0.5s ease-in;
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@vibrabtx/wallet-adapter",
+  "version": "0.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --no-cache --parallel --continue",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "publish-packages": "changeset version && changeset publish",
+    "example:export": "pnpm run --filter {apps/vibrantx} export",
+    "example:build": "pnpm run --filter {apps/vibrantx} build",
+    "deploy:example": "pnpm run example:build && pnpm run example:export && touch ./apps/vibrantx/out/.nojekyll && gh-pages --dist apps/vibrantx/out --dotfiles"
+  },
+  "devDependencies": {
+    "@aptos-labs/eslint-config-adapter": "workspace:*",
+    "@changesets/cli": "^2.22.0",
+    "prettier": "latest",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "gh-pages": "^4.0.0"
+  },
+  "packageManager": "pnpm@7.14.2"
+}

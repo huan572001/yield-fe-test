@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "scope": "vibrantxs-projects",
+  "builds": [
+    {
+      "src": "/dist/apps/vibrantx/*",
+      "use": "@now/static"
+    }
+  ],
+  "routes": [
+    { "src": "/assets/(.*)", "dest": "/dist/apps/vibrantx/src/assets/$1" },
+    { "src": "/(.*).(js|css|ico)", "dest": "/dist/apps/vibrantx/$1.$2" },
+    { "src": "/(.*)", "dest": "/dist/apps/vibrantx/index.html" }
+  ]
+}
