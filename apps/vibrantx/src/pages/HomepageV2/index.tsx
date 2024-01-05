@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import {
   aptos,
   aries,
-  homepageBgColer,
+  main_screen,
   movebit1,
   sushi,
   thala,
@@ -19,7 +19,7 @@ const HomepageV2 = () => {
 
   return (
     <Box
-      backgroundImage={`url(${homepageBgColer})`}
+      backgroundImage={`url(${main_screen})`}
       bgPosition="center"
       bgRepeat={"no-repeat"}
       backgroundSize="cover"
