@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import {
   aptos,
   aries,
-  main_screen,
+  homepageBgColer,
   movebit1,
   sushi,
   thala,
@@ -19,10 +19,11 @@ const HomepageV2 = () => {
 
   return (
     <Box
-      backgroundImage={`url(${main_screen})`}
+      backgroundImage={`url(${homepageBgColer})`}
       bgPosition="center"
       bgRepeat={"no-repeat"}
       backgroundSize="cover"
+      className="!w-full !h-full"
     >
       <Introduce />
       {/* <Box className="flex lg:justify-center py-6"> */}
