@@ -7,9 +7,13 @@
       "use": "@now/static"
     }
   ],
+  "disableStaticImages": true,
   "routes": [
     { "src": "/assets/(.*)", "dest": "/dist/apps/vibrantx/src/assets/$1" },
-    { "src": "/assets/home(.*)", "dest": "/dist/apps/vibrantx/src/assets/home/$1" },
+    {
+      "src": "/assets/home(.*)",
+      "dest": "/dist/apps/vibrantx/src/assets/home/$1"
+    },
     { "src": "/(.*).(js|css|ico)", "dest": "/dist/apps/vibrantx/$1.$2" },
     { "src": "/(.*)", "dest": "/dist/apps/vibrantx/index.html" }
   ]
