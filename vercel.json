@@ -7,7 +7,6 @@
       "use": "@now/static"
     }
   ],
-  "disableStaticImages": true,
   "routes": [
     { "src": "/assets/(.*)", "dest": "/dist/apps/vibrantx/src/assets/$1" },
     {

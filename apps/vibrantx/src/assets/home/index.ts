@@ -7,7 +7,7 @@ import chevronDown from "@/assets/home/chevron-down.svg";
 import chevronUp from "@/assets/home/chevron-up.svg";
 import movebit1 from "@/assets/home/movebit.png";
 import main_screen from "@/assets/home/main_screen.svg";
-import homepageBgColer from "@/assets/home/homepage_bg_coler1.svg";
+import homepageBgColer from "@/assets/home/homepage_bg_coler.svg";
 import arrowrRight from "@/assets/home/arrow-narrow-right.svg";
 import pieChart from "@/assets/home/pie-chart-03.svg";
 import trendUp from "@/assets/home/trend-up-01.svg";
