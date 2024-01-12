@@ -7,9 +7,14 @@ const colors = {
     500: "#23936A",
   },
   primary: {
+    50: "#F5F5F5",
+    100: "#EAEAEA",
+    300: "#D6D6D6",
     400: "#8B8B8B",
     500: "#3D3D3D",
   },
+  orange: "#F2994A",
+  green: "#219653",
 };
 
 export const theme = extendTheme({

@@ -1,8 +1,15 @@
 import iconToken from "@/common/icons";
 import { useAppDispatch, useAppSelector } from "@/hooks/store";
-import { setOpenModalStake } from "@/redux/slice/modalSlice";
+import {
+  setOpenModalStake,
+  setOpenModalUnstake,
+} from "@/redux/slice/modalSlice";
 import { STRATEGY_TYPE, columnsLending } from "@/utils/constants";
-import { formatLargeNumber, getDecimalAndLogoUrl } from "@/utils/functions";
+import {
+  formatLargeNumber,
+  getDecimalAndLogoUrl,
+  getProtocolNameAndFunc,
+} from "@/utils/functions";
 import { Box, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import clsx from "clsx";
 import { AppButton, StyledTableContainer, TableHome } from "..";
@@ -34,8 +41,9 @@ export const TableStake = () => {
         <Tbody>
           {strategies
             .filter((ele) => ele.strategyType === STRATEGY_TYPE.STAKING)
+            .sort((a, b) => a.name.localeCompare(b.name))
             .map((strategies) => {
-              const tokenInfo = getDecimalAndLogoUrl(strategies.displayName);
+              const tokenInfo = getDecimalAndLogoUrl(strategies.name);
               return (
                 <Tr key={strategies.id}>
                   <Td className='flex gap-2 items-center'>
@@ -59,7 +67,10 @@ export const TableStake = () => {
                       }
                       className='rounded-full'
                     />
-                    {strategies.protocols[0]!}
+                    {
+                      getProtocolNameAndFunc(strategies.protocols[0]!)
+                        .protocolDisplayName
+                    }
                   </Td>
                   <Td className='!text-right'>50%</Td>
                   <Td className='!text-center'>Low</Td>
@@ -67,7 +78,7 @@ export const TableStake = () => {
                     {Number(strategies.apr).toFixed(2)}%
                   </Td>
                   <Td className='!text-right'>
-                    <Box className=' flex gap-4 justify-between'>
+                    <Box className=' flex gap-4'>
                       <AppButton
                         onClick={(e) => {
                           e.stopPropagation();
@@ -84,14 +95,14 @@ export const TableStake = () => {
                       </AppButton>
                       <AppButton
                         className='!text-primary-400 !bg-white !border !border-primary-300 shadow-sm'
-                        onClick={() => {
-                          // e.stopPropagation();
-                          // dispatch(
-                          //   setOpenModalStake({
-                          //     isOpen: true,
-                          //     strategies: strategies,
-                          //   })
-                          // );
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          dispatch(
+                            setOpenModalUnstake({
+                              isOpen: true,
+                              strategies: strategies,
+                            })
+                          );
                         }}
                       >
                         Unstake

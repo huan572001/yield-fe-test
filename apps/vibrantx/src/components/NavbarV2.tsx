@@ -1,25 +1,28 @@
-import logoIcon from "@/assets/LogoNew.svg";
-import searchIcon from "@/assets/search-lg.svg";
 import iconCoin from "@/assets/Frame_19.svg";
+import logoIcon from "@/assets/LogoNew.svg";
 import menu from "@/assets/menu-01.svg";
 import close from "@/assets/x-close.svg";
-import { siteConfig } from "@/config/site";
-import { useAppDispatch } from "@/hooks/store";
-import { setOpenModalDynamically } from "@/redux/slice/modalSlice";
+import { optionsDropdownLending, siteConfig } from "@/config/site";
+import { useAppSelector } from "@/hooks/store";
+import { getTokenPrice } from "@/utils/functions";
+import routerLinks from "@/utils/routerLink";
 import { Box } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import SVG from "react-inlinesvg";
 import { useIntl } from "react-intl";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ButtonConnectWalletV2 } from "./button";
-import { ModalSearch } from "./modal";
-import { useState } from "react";
-import routerLinks from "@/utils/routerLink";
 
 export const Navbar = () => {
   const navigate = useNavigate();
   const intl = useIntl();
   const [openMenu, setOpenMenu] = useState(false);
-  const dispatch = useAppDispatch();
+  const [aptosCoin, setAptosCoin] = useState<any>({});
+  const { tokensPrice } = useAppSelector((state) => state.strategies);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  console.log(location);
+
   const onPress = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
     const target = window.document.getElementById(
@@ -29,12 +32,25 @@ export const Navbar = () => {
       target.scrollIntoView({ behavior: "smooth" });
     }
   };
+  const updateURLParams = (params: any) => {
+    if (location.pathname !== "/") {
+      navigate(`/?product=${params}`);
+    } else {
+      if (optionsDropdownLending.some((e) => e.key === params)) {
+        searchParams.set("product", params);
+        setSearchParams(searchParams);
+      }
+    }
+  };
+  useEffect(() => {
+    setAptosCoin(getTokenPrice("0x1::aptos_coin::AptosCoin"));
+  }, [tokensPrice]);
 
   return (
     <Box className="absolute top-0 w-full">
       <Box className=" pt-5 px-4">
-        <Box className="flex justify-center">
-          <Box className="flex justify-between items-center max-w-[1215px] w-full font-semibold text-midnightBlue">
+        <Box className="flex justify-center ">
+          <Box className="flex justify-between relative items-center max-w-[1215px] w-full font-semibold text-midnightBlue">
             <Box className="flex gap-[32px] items-center">
               <SVG
                 onClick={() => navigate("/")}
@@ -43,14 +59,17 @@ export const Navbar = () => {
                 height={44}
               />
             </Box>
-            <Box className=" hidden md:flex gap-[32px] items-center">
+            <Box className=" hidden md:flex gap-[32px] items-center lg:absolute lg:transform lg:-translate-x-1/2 left-1/2">
               <Box className="flex items-center gap-6">
                 {siteConfig.navItems.map((item) => (
                   <a
                     key={item.label}
                     className="hover:cursor-pointer"
                     href={item.href}
-                    onClick={(e) => onPress(e)}
+                    onClick={(e) => {
+                      onPress(e);
+                      updateURLParams(item.id);
+                    }}
                   >
                     <Box data-to-scroll-id={item.id}>
                       {intl.formatMessage({ id: item.label })}
@@ -67,7 +86,7 @@ export const Navbar = () => {
               </Box>
             </Box>
             <Box className="flex gap-2">
-              <Box
+              {/* <Box
                 onClick={() =>
                   dispatch(
                     setOpenModalDynamically({
@@ -78,23 +97,24 @@ export const Navbar = () => {
                 }
                 className="hidden md:flex !bg-white bg-opacity-50 cursor-pointer shadow-sm w-11 h-11  !rounded-full hover:shadow-md  justify-center items-center "
               >
-                {/* <Box className=" rounded-full"> */}
                 <SVG
                   src={searchIcon}
                   width={24}
                   height={24}
                   className="text-deepGreen-100"
                 />
-                {/* </Box> */}
-              </Box>
-              <Box className="flex md:!bg-white md:bg-opacity-50 cursor-pointer md:shadow-sm md:w-11 md:h-11  !rounded-full hover:shadow-md justify-center items-center ">
+
+              </Box> */}
+              <Box className="flex gap-1 px-2 h-8 !bg-white md:bg-opacity-50 cursor-pointer md:shadow-sm    md:h-11  !rounded-full hover:shadow-md justify-center items-center ">
                 {/* <Box className=" rounded-full"> */}
-                <SVG
-                  src={iconCoin}
-                  width={32}
-                  height={32}
-                  className="text-deepGreen-100"
-                />
+                <Box className="">
+                  <SVG
+                    src={iconCoin}
+                    className="text-deepGreen-100 w-6 h-6 md:w-8 md:h-8"
+                  />
+                </Box>
+
+                <Box>{Number(aptosCoin).toFixed(2)}</Box>
                 {/* </Box> */}
               </Box>
               <Box className="md:hidden block">

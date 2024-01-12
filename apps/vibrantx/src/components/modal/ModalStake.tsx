@@ -21,7 +21,7 @@ export const ModalStake = () => {
   return (
     <Modal isOpen={modalStake.isOpen} onClose={handleCloseModal} isCentered>
       <ModalOverlay />
-      <ModalContent className='py-[24px] px-[16px] !rounded-[24px] text-14px border-primary-300 border-[2px] border-solid'>
+      <ModalContent className='py-[24px] px-[16px] !rounded-[24px] text-14px '>
         <ModalBody px={0}>
           <Flex flexDirection={"column"} gap={"24px"}>
             <FormStakePool />

@@ -5,19 +5,19 @@ export const siteConfig = {
   description: "Explore and Earn on Aptos.",
   navItems: [
     {
-      label: "navBar.positions",
-      href: "#positions",
-      id: "positions",
-    },
-    {
       label: "navBar.lending",
       href: "#lending",
-      id: "lending",
+      id: "Lending",
     },
     {
       label: "navBar.staking",
       href: "#staking",
-      id: "staking",
+      id: "Staking",
+    },
+    {
+      label: "navBar.positions",
+      href: "#positions",
+      id: "positions",
     },
   ],
   navMenuItems: [
@@ -38,3 +38,8 @@ export const siteConfig = {
     },
   ],
 };
+export const optionsDropdownLending = [
+  { key: "Earn", label: "Earn" },
+  { key: "Lending", label: "Lend" },
+  { key: "Staking", label: "Stake" },
+];

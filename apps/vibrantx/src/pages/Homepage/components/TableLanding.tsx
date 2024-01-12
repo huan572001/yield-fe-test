@@ -2,57 +2,77 @@ import { arrowrRight, chevronDown, chevronUp } from "@/assets/home";
 import iconToken from "@/common/icons";
 import { useAppDispatch, useAppSelector } from "@/hooks/store";
 import {
+  setOpenModalStake,
   setOpenModalSupply,
+  setOpenModalUnstake,
   setOpenModalWithdraw,
 } from "@/redux/slice/modalSlice";
 import { STRATEGY_TYPE, columnsLending } from "@/utils/constants";
-import { formatLargeNumber, getDecimalAndLogoUrl } from "@/utils/functions";
+import {
+  formatLargeNumber,
+  getDecimalAndLogoUrl,
+  getProtocolNameAndFunc,
+} from "@/utils/functions";
 import { Box, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import SVG from "react-inlinesvg";
-import { useNavigate } from "react-router-dom";
-import { AppButton, StyledTableContainer, TableHome } from "..";
+import { 
+  // useNavigate, 
+  useSearchParams } from "react-router-dom";
+import {
+  AppButton,
+  BorderGradientTable,
+  StyledTableContainer,
+  TableHome,
+  TrTable,
+} from "..";
 
 const Column = ({ strategies, tokenInfo, hiddenRow, dispatch }: any) => {
   const [show, setShow] = useState<boolean>(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   return (
     <>
-      <Tr onClick={() => navigate(`/tokenpage/${strategies.id}`)}>
+      <TrTable
+      //  onClick={() => navigate(`/tokenpage/${strategies.id}`)}
+       >
         <Td
           className={clsx(
-            "flex gap-2 items-center",
             hiddenRow.indexOf(columnsLending[0].key) !== -1 && "hidden"
           )}
         >
-          <img
-            className='w-10 h-10 rounded-full'
-            src={tokenInfo?.logo_url ?? ""}
-          />
-          {strategies.displayName}
+          <div className='flex gap-2 items-center'>
+            <img
+              className='w-8 h-8 rounded-full'
+              src={tokenInfo?.logo_url ?? ""}
+            />
+            {strategies.displayName}
+          </div>
         </Td>
         <Td
           className={clsx(
-            "!text-right",
             hiddenRow.indexOf(columnsLending[1].key) !== -1 && "hidden"
           )}
         >
-          {formatLargeNumber(strategies.totalValueLocked)}
+          <Box className='flex gap-2 items-center '>
+            <SVG
+              width={32}
+              height={32}
+              src={iconToken[strategies.protocols[0]!.toLocaleLowerCase()]}
+            />
+            {
+              getProtocolNameAndFunc(strategies.protocols[0]!)
+                .protocolDisplayName
+            }
+          </Box>
         </Td>
         <Td
           className={clsx(
-            "flex gap-2 items-center justify-center",
             hiddenRow.indexOf(columnsLending[2].key) !== -1 && "hidden"
           )}
         >
-          <SVG
-            width={40}
-            height={40}
-            src={iconToken[strategies.protocols[0]!.toLocaleLowerCase()]}
-          />
-          {strategies.protocols[0]!}
+          Low
         </Td>
         <Td
           className={clsx(
@@ -60,16 +80,20 @@ const Column = ({ strategies, tokenInfo, hiddenRow, dispatch }: any) => {
             hiddenRow.indexOf(columnsLending[3].key) !== -1 && "hidden"
           )}
         >
-          {strategies.ariesDetail?.maximumLtv}%
+          {formatLargeNumber(strategies.totalValueLocked)}
         </Td>
+
         <Td
           className={clsx(
             "!text-right",
             hiddenRow.indexOf(columnsLending[4].key) !== -1 && "hidden"
           )}
         >
-          Low
+          {strategies.ariesDetail?.maximumLtv
+            ? `${strategies.ariesDetail?.maximumLtv}%`
+            : "-"}
         </Td>
+
         <Td className={clsx("!text-right sticky right-0 z-50")}>
           {Number(strategies.apr).toFixed(2)}%
         </Td>
@@ -83,45 +107,80 @@ const Column = ({ strategies, tokenInfo, hiddenRow, dispatch }: any) => {
               className='accordion-header'
             >
               {show ? (
-                <SVG width={24} height={24} src={chevronDown} />
-              ) : (
                 <SVG width={24} height={24} src={chevronUp} />
+              ) : (
+                <SVG width={24} height={24} src={chevronDown} />
               )}
             </Box>
           ) : (
-            <Box className=' flex gap-4 justify-between'>
-              <AppButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch(
-                    setOpenModalSupply({
-                      isOpen: true,
-                      strategies: strategies,
-                    })
-                  );
-                }}
-                className='!bg-blue-200 !text-blue-500'
-              >
-                Supply
-              </AppButton>
-              <AppButton
-                className='!text-primary-400 !bg-white !border !border-primary-300 shadow-sm'
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch(
-                    setOpenModalWithdraw({
-                      isOpen: true,
-                      strategies: strategies,
-                    })
-                  );
-                }}
-              >
-                Withdraw
-              </AppButton>
-            </Box>
+            <>
+              {strategies?.strategyType === STRATEGY_TYPE.LENDING ? (
+                <Box className=' flex gap-4'>
+                  <AppButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(
+                        setOpenModalSupply({
+                          isOpen: true,
+                          strategies: strategies,
+                        })
+                      );
+                    }}
+                    className='!bg-blue-200 !text-blue-500'
+                  >
+                    Supply
+                  </AppButton>
+                  <AppButton
+                    className='!text-primary-400 !bg-white !border !border-primary-300 shadow-sm'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(
+                        setOpenModalWithdraw({
+                          isOpen: true,
+                          strategies: strategies,
+                        })
+                      );
+                    }}
+                  >
+                    Withdraw
+                  </AppButton>
+                </Box>
+              ) : (
+                <Box className=' flex gap-4'>
+                  <AppButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(
+                        setOpenModalStake({
+                          isOpen: true,
+                          strategies: strategies,
+                        })
+                      );
+                    }}
+                    className='!bg-blue-200 !text-blue-500'
+                  >
+                    Stake
+                  </AppButton>
+                  <AppButton
+                    className='!text-primary-400 !bg-white !border !border-primary-300 shadow-sm'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(
+                        setOpenModalUnstake({
+                          isOpen: true,
+                          strategies: strategies,
+                        })
+                      );
+                    }}
+                  >
+                    Unstake
+                  </AppButton>
+                </Box>
+              )}
+            </>
           )}
         </Td>
-      </Tr>
+      </TrTable>
       <Tr>
         <Td
           colSpan={columnsLending.length - hiddenRow?.length + 1}
@@ -141,8 +200,9 @@ const Column = ({ strategies, tokenInfo, hiddenRow, dispatch }: any) => {
                 )}
               >
                 <div className='text-zinc-500 text-sm font-medium'>
-                  {columnsLending[1].label}
-                </div>{" "}
+                  {columnsLending[1].label}{" "}
+                </div>
+                {"   "}
                 <div className=' text-neutral-700 text-sm font-semibold '>
                   {formatLargeNumber(strategies.totalValueLocked)}
                 </div>
@@ -155,7 +215,7 @@ const Column = ({ strategies, tokenInfo, hiddenRow, dispatch }: any) => {
               >
                 <div className='text-zinc-500 text-sm font-medium'>
                   {columnsLending[2].label}{" "}
-                </div>{" "}
+                </div>
                 <div className='text-neutral-700 text-sm font-semibold flex items-center gap-1'>
                   {iconToken[strategies.protocols[0]!.toLocaleLowerCase()] && (
                     <SVG
@@ -197,36 +257,69 @@ const Column = ({ strategies, tokenInfo, hiddenRow, dispatch }: any) => {
                   Low
                 </div>
               </Box>
-              <Box className=' flex gap-4 justify-between sm:mx-0 mx-auto'>
-                <AppButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(
-                      setOpenModalSupply({
-                        isOpen: true,
-                        strategies: strategies,
-                      })
-                    );
-                  }}
-                  className='!bg-blue-200 !text-blue-500 w-[140px] '
-                >
-                  Supply
-                </AppButton>
-                <AppButton
-                  className='!text-primary-400 !bg-white !border !border-primary-300 shadow-sm w-[140px] '
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dispatch(
-                      setOpenModalSupply({
-                        isOpen: true,
-                        strategies: strategies,
-                      })
-                    );
-                  }}
-                >
-                  Withdraw
-                </AppButton>
-              </Box>
+              {strategies?.strategyType === STRATEGY_TYPE.LENDING ? (
+                <Box className=' flex gap-4 justify-between sm:mx-0 mx-auto'>
+                  <AppButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(
+                        setOpenModalSupply({
+                          isOpen: true,
+                          strategies: strategies,
+                        })
+                      );
+                    }}
+                    className='!bg-blue-200 !text-blue-500 w-[140px] '
+                  >
+                    Supply
+                  </AppButton>
+                  <AppButton
+                    className='!text-primary-400 !bg-white !border !border-primary-300 shadow-sm w-[140px] '
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(
+                        setOpenModalSupply({
+                          isOpen: true,
+                          strategies: strategies,
+                        })
+                      );
+                    }}
+                  >
+                    Withdraw
+                  </AppButton>
+                </Box>
+              ) : (
+                <Box className=' flex gap-4'>
+                  <AppButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(
+                        setOpenModalStake({
+                          isOpen: true,
+                          strategies: strategies,
+                        })
+                      );
+                    }}
+                    className='!bg-blue-200 !text-blue-500 w-[140px] '
+                  >
+                    Stake
+                  </AppButton>
+                  <AppButton
+                    className='!text-primary-400 !bg-white !border !border-primary-300 shadow-sm w-[140px] '
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(
+                        setOpenModalUnstake({
+                          isOpen: true,
+                          strategies: strategies,
+                        })
+                      );
+                    }}
+                  >
+                    Unstake
+                  </AppButton>
+                </Box>
+              )}
             </Box>
           </Box>
         </Td>
@@ -240,6 +333,8 @@ export const TableLanding = () => {
   const { strategies } = useAppSelector((state) => state.strategies);
   const [hiddenRow, setHiddenRow] = useState<string[]>([]);
   const tableRef = useRef(null);
+  const [searchParams] = useSearchParams();
+  const product = searchParams.get("product") || "Earn";
   useEffect(() => {
     const observer = new ResizeObserver(handleResize);
     if (tableRef.current) {
@@ -270,12 +365,10 @@ export const TableLanding = () => {
       }
     });
   };
+
   return (
-    <Box>
-      <StyledTableContainer
-        className='mt-[38px] bg-white bg-opacity-40'
-        ref={tableRef}
-      >
+    <BorderGradientTable className='mt-[38px]'>
+      <StyledTableContainer className=' bg-white bg-opacity-40 ' ref={tableRef}>
         <TableHome variant='simple' className=' gradient-table '>
           <Thead>
             <Tr>
@@ -287,7 +380,6 @@ export const TableLanding = () => {
                         column.key === "total_supply" ||
                         column.key === "max_ltv" ||
                         column.key === "supply_apy",
-                      "!text-center": column.key !== "asset",
 
                       hidden:
                         hiddenRow.indexOf(column.key) !== -1 &&
@@ -303,9 +395,12 @@ export const TableLanding = () => {
           </Thead>
           <Tbody>
             {strategies
-              .filter((ele) => ele.strategyType === STRATEGY_TYPE.LENDING)
+              .filter((ele) =>
+                product !== "Earn" ? ele.strategyType === product : ele
+              )
+              .sort((a, b) => b.name.localeCompare(a.name))
               .map((strategies) => {
-                const tokenInfo = getDecimalAndLogoUrl(strategies.displayName);
+                const tokenInfo = getDecimalAndLogoUrl(strategies.name);
 
                 return (
                   <Column
@@ -326,6 +421,6 @@ export const TableLanding = () => {
           <SVG width={24} height={24} src={arrowrRight} />
         </Box>
       )}
-    </Box>
+    </BorderGradientTable>
   );
 };

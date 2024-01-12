@@ -12,7 +12,7 @@ export const store = configureStore({
   reducer: reducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
-  devTools: process.env.NODE_ENV !== "production",
+  devTools: { trace: true, traceLimit: 25 },
 });
 
 export type AppDispatch = typeof store.dispatch;

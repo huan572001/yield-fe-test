@@ -1,5 +1,7 @@
+import { store } from "@/redux/store";
 import defaultList from "@/utils/defaultList.mainnet.json";
 import { BigNumber } from "bignumber.js";
+import { ITokenInfo } from "./utils.type";
 
 function truncate(
   str: string,
@@ -96,9 +98,17 @@ export const getDecimalAndLogoUrl = (symbol: string) => {
       decimals: cryptoInfo.decimals,
       logo_url: cryptoInfo.logo_url,
       coingecko_id: cryptoInfo.coingecko_id,
+      tokenAddress: cryptoInfo?.token_type?.type,
+      tokenName: cryptoInfo?.symbol,
     };
   } else {
-    return undefined; // Symbol not found
+    return {
+      decimals: 4,
+      logo_url: "",
+      coingecko_id: "",
+      tokenAddress: "",
+      tokenName: "",
+    }; // Symbol not found
   }
 };
 
@@ -160,13 +170,134 @@ export const calculateValue = (
   return valueBN.toString();
 };
 
-export const getProtocolName = (protocolName: string): string => {
+export const addBigNumbers = (...numbers: string[]): string => {
+  if (numbers.length < 2) {
+    throw new Error("At least two numbers must be passed to perform addition.");
+  }
+
+  let result: BigNumber = new BigNumber(numbers[0]);
+  for (let i = 1; i < numbers.length; i++) {
+    const bigNum: BigNumber = new BigNumber(numbers[i]);
+    result = result.plus(bigNum);
+  }
+
+  return result.toString();
+};
+
+export const multiplyBigNumbers = (num1: string, num2: string): string => {
+  if (!num1 || !num2) return "0";
+
+  const bigNum1: BigNumber = new BigNumber(num1);
+  const bigNum2: BigNumber = new BigNumber(num2);
+  const result: BigNumber = bigNum1.multipliedBy(bigNum2);
+
+  return result.toString();
+};
+
+export const getProtocolNameAndFunc = (
+  protocolName: string
+): {
+  protocol: string;
+  protocolDisplayName: string;
+  funcUnstake: string;
+  funcUserPosition: string;
+  funcClaimRewards: string;
+} => {
   switch (protocolName.toLocaleLowerCase()) {
     case "amnis":
-      return "amnis";
+      return {
+        protocol: "amnis",
+        protocolDisplayName: "Amnis",
+        funcUnstake: "unstake_and_swap",
+        funcUserPosition: "get_users_position",
+        funcClaimRewards: "",
+      };
     case "thala-lsd":
-      return "thala_lsd";
+      return {
+        protocol: "thala_lsd",
+        protocolDisplayName: "Thala",
+        funcUnstake: "unstake_and_swap",
+        funcUserPosition: "get_users_position",
+        funcClaimRewards: "",
+      };
+    case "aries":
+      return {
+        protocol: "aries",
+        protocolDisplayName: "Aries",
+        funcUnstake: "withdraw",
+        funcUserPosition: "get_position",
+        funcClaimRewards: "claim_rewards",
+      };
     default:
-      return "";
+      return {
+        protocol: "",
+        funcUnstake: "",
+        funcUserPosition: "",
+        protocolDisplayName: "",
+        funcClaimRewards: "",
+      };
   }
+};
+
+export const getTokenPrice = (tokenAddress: string): string | number => {
+  const tokenData = store.getState().strategies.tokensPrice;
+  const token = tokenData.find(
+    (item) =>
+      item.tokenAddress.toLocaleLowerCase() === tokenAddress.toLocaleLowerCase()
+  );
+
+  if (token) {
+    return token.price;
+  }
+
+  return "0"; // Trả về  0 nếu không tìm thấy token
+};
+
+export const getPercentFeeWithProtocol = (protocol: string) => {
+  switch (protocol.toLocaleLowerCase()) {
+    case "amnis":
+      return 0.04 / 100;
+
+    case "thala-lsd":
+      return 0.01 / 100;
+    default:
+      return 0.04 / 100;
+  }
+};
+
+export const formatNumberWithDecimal = (
+  input: string,
+  maxDecimalPlaces: number
+): string => {
+  const [integerPart, decimalPart] = input.split(".");
+
+  const formattedIntegerPart = integerPart || "";
+
+  let formattedDecimalPart = "";
+  if (decimalPart !== undefined) {
+    formattedDecimalPart = `.${decimalPart.slice(0, maxDecimalPlaces)}`;
+  }
+  const result = formattedIntegerPart + formattedDecimalPart;
+
+  return result;
+};
+
+export const keepNumericAndDecimal = (input: string): string => {
+  const regexPattern = /[^\d.]/g;
+  return input.replace(regexPattern, "");
+};
+
+export const getTokenInfo = (
+  tokenAddress: `${string}::${string}::${string}`
+): ITokenInfo => {
+  const cryptoInfo = defaultList.find(
+    (crypto) =>
+      crypto.token_type.type.toLocaleLowerCase() ===
+      tokenAddress.toLocaleLowerCase()
+  );
+
+  if (cryptoInfo) {
+    return cryptoInfo as ITokenInfo;
+  }
+  return {} as ITokenInfo;
 };

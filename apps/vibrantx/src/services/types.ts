@@ -23,6 +23,12 @@ export interface Strategies {
   strategyType: string;
   rewardToken: `${string}::${string}::${string}`[];
   ariesDetail: AriesDetail | null;
+  positionToken: `${string}::${string}::${string}`;
+  feeToken: string[] | string;
+  depositFee: string;
+  withdrawalFee: string;
+  depositSwapFee: string;
+  withdrawalSwapFee: string;
 }
 
 export interface AriesDetail {
@@ -64,4 +70,21 @@ export interface IResponseCoingecko {
   atl_date: string;
   roi: null;
   last_updated: string;
+}
+
+export interface tokensPrice {
+  name: string;
+  price: string;
+  tokenAddress: string;
+}
+export interface AptosCoin {
+  success: number;
+  data: {
+    success: boolean;
+    data: {
+      current_price: number;
+    };
+    metadata: {};
+  };
+  metadata: {};
 }

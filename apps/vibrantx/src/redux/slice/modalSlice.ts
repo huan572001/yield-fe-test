@@ -19,6 +19,10 @@ export interface IAuthState {
     isOpen: boolean;
     strategies: Strategies;
   };
+  modalUnstake: {
+    isOpen: boolean;
+    strategies: Strategies;
+  };
   modalSettings: {
     isOpen: boolean;
     strategies: Strategies;
@@ -40,6 +44,10 @@ const initialState: IAuthState = {
     strategies: {} as Strategies,
   },
   modalStake: {
+    isOpen: false,
+    strategies: {} as Strategies,
+  },
+  modalUnstake: {
     isOpen: false,
     strategies: {} as Strategies,
   },
@@ -103,6 +111,17 @@ export const modalSlice = createSlice({
       state.modalStake.isOpen = false;
       state.modalStake.strategies = {} as Strategies;
     },
+    setOpenModalUnstake: (
+      state,
+      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>
+    ) => {
+      state.modalUnstake.isOpen = action.payload.isOpen;
+      state.modalUnstake.strategies = action.payload.strategies;
+    },
+    setCloseModalUnstake: (state) => {
+      state.modalUnstake.isOpen = false;
+      state.modalUnstake.strategies = {} as Strategies;
+    },
     setOpenModalSettings: (
       state,
       action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>
@@ -130,6 +149,8 @@ export const {
   setOpenModalWithdraw,
   setCloseModalStake,
   setOpenModalStake,
+  setCloseModalUnstake,
+  setOpenModalUnstake,
 } = modalSlice.actions;
 
 export default modalSlice.reducer;

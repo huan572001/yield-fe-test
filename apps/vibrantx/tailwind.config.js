@@ -3,7 +3,12 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      boxShadow: {
+        "3xl":
+          "0px 9px 28px 8px rgba(0, 0, 0, 0.05), 0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08)",
+      },
+    },
     colors: {
       pageBackground: "#F2F2F0",
       tealGreenColor: "#49BCA0",
@@ -49,6 +54,7 @@ export default {
         500: "#655CFF",
         600: "#2563eb",
         700: "#1d4ed8",
+        800: "#1677FF",
       },
       violet: {
         400: "#a78bfa",
@@ -69,6 +75,24 @@ export default {
         400: "#8B8B8B",
         450: "#646464",
         500: "#3D3D3D",
+        600: "#5B53E6",
+      },
+      primaryPurple: {
+        600: "#5B53E6",
+        500: "#655CFF",
+      },
+      error: {
+        25: "#FFFBFA",
+        200: "#FECDCA",
+        500: "#F04438",
+      },
+      overlay: {
+        20: "#655CFF33",
+      },
+      neutralGray: {
+        500: "#667085",
+        600: "#475467",
+        700: "#344054",
       },
     },
     fontFamily: {

@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react";
+import { GradientCart } from "../Homepage.styled";
 
 const CartHome = () => {
   return (
@@ -6,11 +7,11 @@ const CartHome = () => {
       <Box className=" flex  justify-center ">
         <Box className="w-[1215px] ">
           <Box className="xl:px-0 px-4">
-            <Box className="w-full px-8 py-6 opacity-60 bg-gradient-to-r from-indigo-500 via-cyan-600 to-sky-600 rounded-3xl border border-indigo-400 border-opacity-80 backdrop-blur-2xl ">
-              <Box className="flex flex-wrap justify-around gap-6">
+            <GradientCart className="w-full px-8 py-6 rounded-3xl border">
+              <Box className="flex flex-wrap justify-around gap-12">
                 <Box>
                   <Box className=" text-center text-white text-4xl font-medium ">
-                    $2.13B
+                    $120.99M
                   </Box>
                   <Box className=" text-center text-white text-sm font-medium">
                     Total APT Trading Volume
@@ -18,7 +19,7 @@ const CartHome = () => {
                 </Box>
                 <Box>
                   <Box className=" text-center text-white text-4xl font-medium ">
-                    $2.13B
+                    400M+
                   </Box>
                   <Box className=" text-center text-white text-sm font-medium">
                     Total APT Transactions
@@ -33,7 +34,7 @@ const CartHome = () => {
                   </Box>
                 </Box>
               </Box>
-            </Box>
+            </GradientCart>
           </Box>
         </Box>
       </Box>

@@ -108,6 +108,9 @@ importers:
       react-ga:
         specifier: ^3.3.1
         version: 3.3.1(prop-types@15.8.1)(react@18.2.0)
+      react-helmet-async:
+        specifier: ^2.0.4
+        version: 2.0.4(react-dom@18.2.0)(react@18.2.0)
       react-icons:
         specifier: ^4.12.0
         version: 4.12.0(react@18.2.0)
@@ -129,6 +132,9 @@ importers:
       react-use:
         specifier: ^17.4.2
         version: 17.4.2(react-dom@18.2.0)(react@18.2.0)
+      vite-plugin-sitemap:
+        specifier: ^0.5.3
+        version: 0.5.3
       yup:
         specifier: ^1.3.3
         version: 1.3.3
@@ -10360,6 +10366,19 @@ packages:
       react: 18.2.0
     dev: false
 
+  /react-helmet-async@2.0.4(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-yxjQMWposw+akRfvpl5+8xejl4JtUlHnEBcji6u8/e6oc7ozT+P9PNTWMhCbz2y9tc5zPegw2BvKjQA+NwdEjQ==}
+    peerDependencies:
+      react: ^16.6.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.6.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      invariant: 2.2.4
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-fast-compare: 3.2.2
+      shallowequal: 1.1.0
+    dev: false
+
   /react-icons@4.12.0(react@18.2.0):
     resolution: {integrity: sha512-IBaDuHiShdZqmfc/TwHu6+d6k2ltNCf3AszxNmjJc1KUfXdEeRJOKyNvLmAHaarhzGmTSVygNdyu8/opXv2gaw==}
     peerDependencies:
@@ -10893,6 +10912,10 @@ packages:
   /set-harmonic-interval@1.0.1:
     resolution: {integrity: sha512-AhICkFV84tBP1aWqPwLZqFvAwqEoVA9kxNMniGEUvzOlm4vLmOFLiTT3UZ6bziJTy4bOVpzWGTfSCbmaayGx8g==}
     engines: {node: '>=6.9'}
+    dev: false
+
+  /shallowequal@1.1.0:
+    resolution: {integrity: sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==}
     dev: false
 
   /shebang-command@1.2.0:
@@ -11831,6 +11854,10 @@ packages:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
     dev: true
+
+  /vite-plugin-sitemap@0.5.3:
+    resolution: {integrity: sha512-DSqZLAkXaNgoJLcaxjJHrfWjIIiZRSuZIseE7ihJYUvPFG4OsvXn/+Oujmzbs+6tV7yu1dn7uhWXpV7QuiH/1g==}
+    dev: false
 
   /vite@5.0.10(@types/node@20.10.5):
     resolution: {integrity: sha512-2P8J7WWgmc355HUMlFrwofacvr98DAjoE52BfdbwQtyLH06XKwaL/FMnmKM2crF0iX4MpmMKoDlNCB1ok7zHCw==}

@@ -1,13 +1,14 @@
-import checkCircelIcon from "@/assets/check_circle.svg";
 import { useAppDispatch, useAppSelector } from "@/hooks/store";
 import { AppButton } from "@/pages/Homepage";
 import { setCloseModalSupply, setOpenModal } from "@/redux/slice/modalSlice";
-import { StrategiesAPI } from "@/services";
 import {
   calculateValue,
   calculateValueWithDecimals,
   convertValueToDecimals,
-  getDecimalAndLogoUrl,
+  formatNumberWithDecimal,
+  getTokenInfo,
+  getTokenPrice,
+  keepNumericAndDecimal,
 } from "@/utils/functions";
 import {
   InputTransactionData,
@@ -17,7 +18,6 @@ import {
   Box,
   Flex,
   FormControl,
-  FormErrorMessage,
   Input,
   InputGroup,
   InputRightAddon,
@@ -25,35 +25,56 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-import { Field, Formik, FormikErrors } from "formik";
+import { Field, Form, Formik, FormikErrors, useFormik } from "formik";
 import { useEffect, useState } from "react";
-import SVG from "react-inlinesvg";
+// import SVG from "react-inlinesvg";
+import * as Yup from "yup";
 import { useAptos } from "../AptosContext";
+import { ToastModal } from "../toast";
+
+interface FormValues {
+  amount: string;
+}
 
 const moduleAddress = import.meta.env.VITE_APP_MODULE_ADDRESS;
 
 export const FormDepositSupply = () => {
-  const [nextStep, setNextStep] = useState<boolean>(false);
+  // const [nextStep, setNextStep] = useState<boolean>(false);
+  const aptos = useAptos();
+  const toast = useToast();
   const dispatch = useAppDispatch();
   const { modalSupply } = useAppSelector((state) => state.modal);
-  const tokenInfo = getDecimalAndLogoUrl(modalSupply.strategies.name ?? "");
-  const toast = useToast();
+  const tokenInfo =
+    modalSupply?.strategies?.stakeToken &&
+    modalSupply?.strategies?.stakeToken![0] &&
+    getTokenInfo(modalSupply?.strategies?.stakeToken![0]);
 
-  const aptos = useAptos();
   const { account, connected, signAndSubmitTransaction } = useWallet();
   const [loading, setLoading] = useState<boolean>(true);
   const [availableBalance, setAvailableBalance] = useState<number | string>(0);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
 
-  // const SupplySchema = Yup.object().shape({
-  //   amount: Yup.string()
-  //     .required("Enter amount")
-  //     .test("compareAmount", (value, { createError }) => {
-  //       if (Number(value) > Number(availableBalance)) {
-  //         return createError({ message: "account has insufficient funds" });
-  //       }
-  //     }),
-  // });
+  const validationSchema = Yup.object().shape({
+    amount: Yup.string()
+      .required("Amount is required")
+      .test("validateAmount", (value, { createError }) => {
+        if (Number(value) <= 0) {
+          return createError({ message: "Amount must be greater than 0" });
+        } else if (Number(value) > Number(availableBalance)) {
+          return createError({ message: "Account has insufficient funds" });
+        }
+
+        return true;
+      }),
+  });
+
+  const formik = useFormik<FormValues>({
+    initialValues: {
+      amount: "",
+    },
+    onSubmit: () => {},
+    validationSchema: validationSchema,
+  });
 
   const handleClickMaxOrHaft = (
     div: number,
@@ -65,18 +86,23 @@ export const FormDepositSupply = () => {
       amount: string;
     }>>
   ) => {
-    setFieldValue("amount", Number(availableBalance) / div);
+    setFieldValue(
+      "amount",
+      formatNumberWithDecimal(
+        String(Number(availableBalance) / div),
+        tokenInfo?.decimals
+      )
+    );
   };
 
   const supplyPool = async (amount: number) => {
     if (!account) return [];
-    const tokenInfo = getDecimalAndLogoUrl(modalSupply.strategies.displayName);
-    const value = convertValueToDecimals(amount, tokenInfo?.decimals ?? 6);
+    const value = convertValueToDecimals(amount, tokenInfo?.decimals);
     const transaction: InputTransactionData = {
       data: {
         function: `${moduleAddress}::aries::lend`,
-        functionArguments: [value, false, false],
-        typeArguments: [modalSupply?.strategies?.poolType],
+        functionArguments: [value],
+        typeArguments: [tokenInfo.token_type.type],
       },
     };
 
@@ -89,17 +115,14 @@ export const FormDepositSupply = () => {
         transactionHash: response.hash,
       });
       toast({
-        position: "bottom-right",
+        position: "top-right",
         render: () => (
-          <Box color='white' p={4} className='bg-indigo-400 text-white'>
-            <Box>Transaction created.</Box>
-            <a
-              href={`https://explorer.aptoslabs.com/txn/${result.version}?network=mainnet`}
-              target='_blank'
-            >
-              View transaction
-            </a>
-          </Box>
+          <ToastModal
+            toast={toast}
+            title="Transaction created."
+            content="View transaction"
+            link={`https://explorer.aptoslabs.com/txn/${result.version}?network=mainnet`}
+          />
         ),
         status: "success",
         duration: 9000,
@@ -111,206 +134,155 @@ export const FormDepositSupply = () => {
   };
 
   useEffect(() => {
-    if (account?.address && modalSupply.strategies.displayName) {
+    if (account?.address && tokenInfo?.token_type?.type) {
       (async () => {
         const result = await aptos.getAccountCoinAmount({
           accountAddress: account.address,
-          coinType: modalSupply.strategies.poolType,
+          coinType: tokenInfo?.token_type?.type,
         });
-        const tokenInfo = getDecimalAndLogoUrl(
-          modalSupply.strategies.displayName
-        );
-        const { data } = await StrategiesAPI.getPriceFromCoingeckoId(
-          tokenInfo?.coingecko_id ?? ""
-        );
+        const tokenPrice = getTokenPrice(tokenInfo?.token_type?.type);
         const balance = calculateValueWithDecimals(
           result,
           tokenInfo?.decimals ?? 6
         );
         setAvailableBalance(balance);
-        setCurrentPrice(data[0]!?.current_price);
+        setCurrentPrice(Number(tokenPrice));
         setLoading(false);
       })();
     }
-  }, [modalSupply.strategies.poolType, modalSupply.strategies.name]);
+  }, [account?.address, tokenInfo?.token_type?.type]);
 
   return (
     <>
-      <Box className='text-[24px] font-medium text-primary-500 leading-[32px]'>
-        {nextStep ? (
-          <Flex alignItems={"center"} gap={"4px"}>
-            <SVG src={checkCircelIcon} /> <Box>Your Stake Preview</Box>
-          </Flex>
-        ) : (
-          "Lend"
-        )}
+      <Box className="text-[24px] font-medium text-primary-500 leading-[32px]">
+        Lend
       </Box>
-      <Formik
-        initialValues={{
-          amount: "",
-        }}
-        onSubmit={(values) => {
-          alert(JSON.stringify(values, null, 2));
-        }}
-        // validationSchema={SupplySchema}
-      >
-        {({
-          handleSubmit,
-          errors,
-          touched,
-          values,
-          setFieldValue,
-          dirty,
-          isValid,
-        }) => (
-          <form onSubmit={handleSubmit}>
-            <VStack spacing={4} align='flex-start'>
-              <Box className='w-full'>
-                <Box>Your Asset</Box>
-                {nextStep ? (
-                  <Flex
-                    gap={"8px"}
-                    flexDirection={"column"}
-                    className='text-primary-450'
-                  >
-                    <Flex
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
+      <Formik initialValues={formik.initialValues} onSubmit={formik.submitForm}>
+        <Form>
+          <VStack
+            spacing={4}
+            align="flex-start"
+            className="font-medium text-primary-400"
+          >
+            <Box className="w-full">
+              <Box>Your Asset</Box>
+              <Box className="p-3 rounded-[16px] border-[1px] border-solid border-primary-300 w-full flex flex-col gap-4 bg-primary-50">
+                <Flex justifyContent={"space-between"} alignItems={"center"}>
+                  <Flex gap={1}>
+                    <AppButton
+                      onClick={() =>
+                        handleClickMaxOrHaft(1, formik.setFieldValue)
+                      }
+                      className="!py-[2px] px-2  !h-auto !text-primaryPurple-600 !bg-overlay-20 hover:!bg-primaryPurple-500 hover:!text-white"
                     >
-                      <Box className='text-primary-500 text-[24px] font-medium'>
-                        {values.amount} {modalSupply.strategies.displayName}
-                      </Box>
-                      <img className='w-5 h-5' src={tokenInfo?.logo_url} />
-                    </Flex>
-                    <Box>
-                      ~$
-                      {calculateValue(
-                        values.amount ? values.amount : 0,
-                        currentPrice
-                      )}
-                    </Box>
-                    <Flex justifyContent={"space-between"}>
-                      <Box>Lend APY</Box>
-                      <Box>{modalSupply.strategies.apr}%</Box>
-                    </Flex>
+                      Max
+                    </AppButton>
+                    <AppButton
+                      onClick={() =>
+                        handleClickMaxOrHaft(2, formik.setFieldValue)
+                      }
+                      className="!py-[2px] px-2  !h-auto !text-primaryPurple-600 !bg-overlay-20 hover:!bg-primaryPurple-500 hover:!text-white"
+                    >
+                      Half
+                    </AppButton>
                   </Flex>
-                ) : (
-                  <Box className='p-3 rounded-[16px] border-[1px] border-solid border-primary-300 w-full flex flex-col gap-4'>
-                    <Flex
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                    >
-                      <Flex gap={1}>
-                        <AppButton
-                          onClick={() => handleClickMaxOrHaft(1, setFieldValue)}
-                          className='!py-[2px] px-2  !h-auto !text-white !bg-indigo-500 bg-opacity-60'
-                        >
-                          Max
-                        </AppButton>
-                        <AppButton
-                          onClick={() => handleClickMaxOrHaft(2, setFieldValue)}
-                          className='!py-[2px] px-2  !h-auto !text-white !bg-indigo-500 bg-opacity-60'
-                        >
-                          Half
-                        </AppButton>
-                      </Flex>
-                      <Flex alignItems={"center"} gap={1}>
-                        <Box>Available: </Box>
-                        {loading ? (
-                          <Skeleton height={"10px"} width={"20px"} />
-                        ) : (
-                          <Box>{availableBalance}</Box>
-                        )}
-                      </Flex>
-                    </Flex>
-                    <Flex alignItems={"center"} gap={"8px"}>
-                      <FormControl
-                        isInvalid={!!errors?.amount && touched?.amount}
-                      >
-                        <InputGroup>
-                          <Field
-                            as={Input}
-                            id='amount'
-                            name='amount'
-                            type='text'
-                            className='!text-[24px] !text-primary-500 !outline-none !border-none !rounded-full hover:!border-none  focus-visible:!border-none focus-visible:!shadow-none !shadow-none'
-                            value={values.amount}
-                            disabled={!connected}
-                            validate={(value: string) => {
-                              let error;
-
-                              if (Number(value) > Number(availableBalance)) {
-                                error = "account has insufficient funds";
-                              } else if (Number(value) <= 0) {
-                                error = "amount invalid";
-                              }
-
-                              return error;
-                            }}
-                          />
-                          <InputRightAddon className='!border-none !bg-[transparent] !p-0'>
-                            <Flex gap={"8px"}>
-                              <img
-                                src={tokenInfo?.logo_url ?? ""}
-                                className='w-5 h-5'
-                              />
-                              <Box className='font-medium text-primary-500'>
-                                {modalSupply.strategies.displayName}
-                              </Box>
-                            </Flex>
-                          </InputRightAddon>
-                        </InputGroup>
-                        <FormErrorMessage>{errors.amount}</FormErrorMessage>
-                        <Flex justifyContent={"flex-end"}>
-                          ~$
-                          {calculateValue(
-                            values.amount ? values.amount : 0,
-                            currentPrice
-                          )}
-                        </Flex>
-                      </FormControl>
-                    </Flex>
-                  </Box>
-                )}
-              </Box>
-              {nextStep ? (
-                <Flex gap={"8px"} width={"100%"}>
-                  <AppButton
-                    width='full'
-                    className='!bg-blue-500 !text-white'
-                    onClick={() => supplyPool(Number(values.amount))}
-                  >
-                    Supply
-                  </AppButton>
-                  <AppButton
-                    width='full'
-                    className='!border-blue-500 border-solid border-[1px] !text-blue-500 !bg-white'
-                    onClick={() => dispatch(setCloseModalSupply())}
-                  >
-                    Cancel
-                  </AppButton>
+                  <Flex alignItems={"center"} gap={1}>
+                    <Box>Available: </Box>
+                    {!connected ? (
+                      "-"
+                    ) : loading ? (
+                      <Skeleton height={"10px"} width={"20px"} />
+                    ) : (
+                      <Box>{availableBalance}</Box>
+                    )}
+                  </Flex>
                 </Flex>
-              ) : connected ? (
-                <AppButton
-                  width='full'
-                  className='!bg-blue-500 !text-white'
-                  isDisabled={!(isValid && dirty)}
-                  onClick={() => setNextStep(true)}
-                >
-                  Deposit
-                </AppButton>
-              ) : (
-                <AppButton
-                  width='full'
-                  className='!bg-blue-500 !text-white'
-                  onClick={() => dispatch(setOpenModal())}
-                >
-                  Connect Wallet
-                </AppButton>
-              )}
-            </VStack>
-          </form>
-        )}
+                <Flex alignItems={"center"} gap={"8px"}>
+                  <FormControl
+                    isInvalid={
+                      !!formik.errors?.amount && formik.touched?.amount
+                    }
+                  >
+                    <InputGroup>
+                      <Field
+                        as={Input}
+                        id="amount"
+                        name="amount"
+                        type="text"
+                        className="!text-[24px] !text-primary-500 !outline-none !border-none !rounded-full hover:!border-none  focus-visible:!border-none focus-visible:!shadow-none !shadow-none"
+                        value={formik.values.amount}
+                        disabled={!connected}
+                        validate={(value: string) => {
+                          let error;
+
+                          if (Number(value) > Number(availableBalance)) {
+                            error = "account has insufficient funds";
+                          } else if (Number(value) <= 0) {
+                            error = "amount invalid";
+                          }
+
+                          return error;
+                        }}
+                        autoComplete="off"
+                        onChange={(e: React.ChangeEvent<any>) => {
+                          const amount = formatNumberWithDecimal(
+                            keepNumericAndDecimal(e.target.value),
+                            tokenInfo?.decimals ?? 6
+                          );
+                          formik.setFieldValue("amount", amount);
+                        }}
+                      />
+                      <InputRightAddon className="!border-none !bg-[transparent] !p-0">
+                        <Flex gap={"8px"}>
+                          <img
+                            src={tokenInfo?.logo_url ?? ""}
+                            className="w-5 h-5"
+                          />
+                          <Box className="font-medium text-primary-500">
+                            {tokenInfo?.official_symbol}
+                          </Box>
+                        </Flex>
+                      </InputRightAddon>
+                    </InputGroup>
+                    {formik.errors.amount && (
+                      <span className="text-primaryRed text-[12px]">
+                        {formik.errors.amount}
+                      </span>
+                    )}
+                    <Flex justifyContent={"flex-end"}>
+                      ~$
+                      {formatNumberWithDecimal(
+                        calculateValue(
+                          formik.values.amount ? formik.values.amount : 0,
+                          currentPrice
+                        ),
+                        4
+                      )}
+                    </Flex>
+                  </FormControl>
+                </Flex>
+              </Box>
+            </Box>
+            {connected ? (
+              <AppButton
+                width="full"
+                className="!bg-blue-500 !text-white"
+                isDisabled={!(formik.isValid && formik.dirty)}
+                onClick={() => supplyPool(Number(formik.values.amount))}
+              >
+                Supply
+              </AppButton>
+            ) : (
+              <AppButton
+                width="full"
+                className="!bg-blue-500 !text-white"
+                onClick={() => dispatch(setOpenModal())}
+              >
+                Connect Wallet
+              </AppButton>
+            )}
+          </VStack>
+        </Form>
       </Formik>
     </>
   );

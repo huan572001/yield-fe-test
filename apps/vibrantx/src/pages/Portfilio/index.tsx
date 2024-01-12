@@ -1,33 +1,34 @@
-import { Box, Input, InputGroup, InputRightAddon } from "@chakra-ui/react";
-import { homepageBgColer, main_screen } from "@/assets/home";
+import { Box } from "@chakra-ui/react";
 
 import { useIntl } from "react-intl";
 import { TextGradient } from "./index.style";
+import { Helmet } from "react-helmet-async";
 
 export const Portfilio = () => {
   const intl = useIntl();
 
   return (
-    <Box
-      className="bg-cover bg-center bg-no-repeat h-[100vh]"
-      style={{
-        backgroundImage: `url(${homepageBgColer})`,
-      }}
-    >
-      <Box
-        className=" w-full h-full bg-cover bg-center bg-no-repeat "
-        style={{
-          backgroundImage: `url(${main_screen})`,
-        }}
-      >
+    <Box className="bg-cover bg-center bg-no-repeat h-[100vh]">
+      <Helmet>
+        <title>Portfilio</title>
+        <meta
+          name="description"
+          content="One stop shop for discovering and accessing all exciting DeFi opportunities on Aptos."
+        />
+        <meta
+          name="keywords"
+          content="coin, vibrantx,aptos, APT,Lending coin, Staking coin"
+        ></meta>
+      </Helmet>
+      <Box className=" w-full h-full bg-cover bg-center bg-no-repeat ">
         <Box className="grid justify-center md:pt-[307px] pt-36 gap-4 xl:px-0 px-4">
           <TextGradient>
-            {intl.formatMessage({ id: "portfolio.title" })}
+            <h1>{intl.formatMessage({ id: "portfolio.title" })}</h1>
           </TextGradient>
-          <Box className="text-primary-450 text-base font-medium text-center ">
+          {/* <Box className="text-primary-450 text-base font-medium text-center ">
             {intl.formatMessage({ id: "portfolio.sub-title" })}
-          </Box>
-          <InputGroup className="min-[436px]:!w-[400px] mx-auto">
+          </Box> */}
+          {/* <InputGroup className="min-[436px]:!w-[400px] mx-auto">
             <Input
               placeholder="Your Email"
               className="!rounded-l-[100px] !border-gray-300 !border-r-0 !border  !bg-white  text-base"
@@ -37,7 +38,7 @@ export const Portfilio = () => {
                 {intl.formatMessage({ id: "portfolio.button.submit" })}{" "}
               </p>
             </InputRightAddon>
-          </InputGroup>
+          </InputGroup> */}
         </Box>
       </Box>
     </Box>

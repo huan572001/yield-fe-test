@@ -27,7 +27,7 @@ export const DropdownGradient = ({
   options,
 }: DropdownGradientProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const dropdownValueFromURL = searchParams.get("product") || "lend";
+  const dropdownValueFromURL = searchParams.get("product") || "Earn";
   const [selectedKey, setSelectedKey] = useState(dropdownValueFromURL || "");
 
   const handleDropdownChange = (key: string) => {
@@ -46,7 +46,9 @@ export const DropdownGradient = ({
     // Notify parent component about the change
     onChange(selectedKey);
   }, [selectedKey, onChange]);
-
+  useEffect(() => {
+    setSelectedKey(dropdownValueFromURL);
+  }, [dropdownValueFromURL]);
   return (
     <Menu placement="bottom-end">
       {({ isOpen }) => (

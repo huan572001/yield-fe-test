@@ -1,12 +1,14 @@
 import { useAppDispatch } from "@/hooks/store";
 import { setOpenModal } from "@/redux/slice/modalSlice";
 import { truncateAddress } from "@/utils/functions";
+import routerLinks from "@/utils/routerLink";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { useIntl } from "react-intl";
-
+import { useNavigate } from "react-router-dom";
 export const ButtonConnectWalletV2 = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const intl = useIntl();
   const { wallet, account, connected, disconnect } = useWallet();
 
@@ -15,8 +17,11 @@ export const ButtonConnectWalletV2 = () => {
       {connected && wallet && account ? (
         <Menu>
           <MenuButton
-            className=" !h-11 px-4 py-2.5 !bg-indigo-500 !rounded-full justify-center items-center gap-2.5 inline-flex hover:!bg-indigo-400 cursor-pointer"
+            className=" !h-11 px-4 py-2.5 !text-base !text-indigo-500 !font-semibold !rounded-full justify-center items-center gap-2.5 inline-flex  cursor-pointer  border border-indigo-500 "
             as={Button}
+            style={{
+              background: "bottom",
+            }}
           >
             {truncateAddress(account?.address)}
           </MenuButton>
@@ -24,7 +29,9 @@ export const ButtonConnectWalletV2 = () => {
             <MenuItem>
               {intl.formatMessage({ id: "navBar.copy-address" })}
             </MenuItem>
-            <MenuItem>{intl.formatMessage({ id: "navBar.account" })}</MenuItem>
+            <MenuItem onClick={() => navigate(routerLinks("Portfolio"))}>
+              {intl.formatMessage({ id: "navBar.account" })}
+            </MenuItem>
             <MenuItem onClick={() => disconnect()}>
               {intl.formatMessage({ id: "navBar.logout" })}
             </MenuItem>
@@ -32,10 +39,10 @@ export const ButtonConnectWalletV2 = () => {
         </Menu>
       ) : (
         <div
-          className="w-40 h-11 px-4 py-2.5 bg-indigo-500 rounded-full justify-center items-center gap-2.5 inline-flex hover:bg-indigo-400 cursor-pointer"
+          className=" !h-11 px-4 py-2.5 !text-xs !bg-indigo-500  !rounded-full justify-center items-center gap-2.5 inline-flex  cursor-pointer  border border-indigo-500 "
           onClick={() => dispatch(setOpenModal())}
         >
-          <div className="text-white text-base font-medium leading-normal">
+          <div className="text-center text-white text-sm font-semibold ">
             {intl.formatMessage({ id: "navBar.connect-wallet" })}
           </div>
         </div>

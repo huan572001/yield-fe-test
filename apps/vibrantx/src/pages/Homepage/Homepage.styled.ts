@@ -3,6 +3,7 @@ import {
   Box as ChakraBox,
   Button as ChakraButton,
   Table as ChakraTable,
+  Tr,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 
@@ -12,14 +13,21 @@ export const BoxHomePage = styled(ChakraBox)`
   padding: 60px 30px 30px 30px;
   width: 100%;
 `;
-
+export const BorderGradientTable = styled(Box)`
+  // background: linear-gradient(99deg, #8781e7 5%, #a4ecea 96.68%);
+  padding: 1px;
+  border-radius: 24px;
+`;
 export const StyledTableContainer = styled(Box)`
   border-radius: 24px;
   overflow: hidden;
+  // border: 10px solid transparent;
+  // border-image: linear-gradient(to right, #8781e7 69%, #a4ecea 59%);
 `;
 
 export const TableHome = styled(ChakraTable)({
   borderRadius: "24px !important",
+  overflow: "auto",
   ["thead tr th"]: {
     textTransform: "none",
     color: `#8B8B8B`,
@@ -61,5 +69,23 @@ export const AppButton = styled(ChakraButton)({
   },
   ":active": {
     transform: "scale(0.98)",
+  },
+  "&.disabled": {
+    color: "#8B8B8B !important",
+    background: "rgba(214, 214, 214, 0.50) !important",
+    boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+    opacity: "1 !important",
+  },
+  "&.disabled:hover": {
+    backgroundColor: "inherit",
+    transform: "none",
+  },
+});
+
+export const TrTable = styled(Tr)({
+  ":hover": {
+    transition: "box-shadow 400ms ease 0s",
+    cursor: "pointer",
+    boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 8px",
   },
 });

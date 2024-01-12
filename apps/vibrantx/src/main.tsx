@@ -13,7 +13,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App.tsx";
 import "./index.css";
-
+import { HelmetProvider } from "react-helmet-async";
 const aptosConfig = new AptosConfig({ network: Network.MAINNET });
 const aptos = new Aptos(aptosConfig);
 
@@ -27,7 +27,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <IntlProvider>
             <AppContext>
               <Router basename={""}>
-                <App />
+                <HelmetProvider>
+                  <App />
+                </HelmetProvider>
               </Router>
             </AppContext>
           </IntlProvider>

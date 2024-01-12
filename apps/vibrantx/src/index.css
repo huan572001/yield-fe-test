@@ -76,3 +76,18 @@
   max-height: 200px !important;
   transition: max-height 0.5s ease-in;
 }
+:root {
+  --gradient-purple-50: linear-gradient(
+    to right,
+    rgba(135, 129, 231, 0.69),
+    rgba(164, 236, 234, 0.59)
+  );
+}
+@keyframes slideRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-51%);
+  }
+}

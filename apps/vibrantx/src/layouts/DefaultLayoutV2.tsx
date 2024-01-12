@@ -1,23 +1,28 @@
 import Footer from "@/components/FooterV2";
+import Loading from "@/components/Loading";
 import { Navbar } from "@/components/NavbarV2";
 import {
   ModalDynamically,
   ModalSearch,
   ModalStake,
   ModalSupply,
+  ModalUnstake,
   ModalWalletConnect,
   ModalWithdraw,
 } from "@/components/modal";
-import { ModalSettings } from "@/components/modal/ModalSetting";
 import { useAppDispatch } from "@/hooks/store";
 import { setOpenModalDynamically } from "@/redux/slice/modalSlice";
-import { useEffect } from "react";
+import { getPrice } from "@/redux/slice/strategiesSlice";
+import { Box } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 export const DefaultLayoutV2 = () => {
   const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    dispatch(getPrice());
     const handleKeyDown = (event: any) => {
       if (event.key === "/") {
         event.preventDefault();
@@ -30,13 +35,17 @@ export const DefaultLayoutV2 = () => {
       }
     };
     document.addEventListener("keydown", handleKeyDown);
+    setLoading(false);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-  return (
-    <div className='bg-pageBackground'>
+
+  return loading ? (
+    <Loading />
+  ) : (
+    <Box position={"relative"}>
       <div className='flex flex-1 flex-col  w-full mx-auto'>
         <Navbar />
         <main className=' w-full mx-auto overflow-hidden'>
@@ -49,9 +58,9 @@ export const DefaultLayoutV2 = () => {
       <ModalWalletConnect />
       <ModalDynamically />
       <ModalSupply />
-      <ModalSettings />
       <ModalWithdraw />
       <ModalStake />
-    </div>
+      <ModalUnstake />
+    </Box>
   );
 };

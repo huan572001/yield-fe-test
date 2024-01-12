@@ -23,15 +23,19 @@ const Offer = () => {
                   <SVG src={currency} />
                 </Box>
                 <Box className=" text-primary-400 text-base font-medium">
-                  Earn yields with your crypto capital without any active
-                  management
+                  <p>Step 1: Connect wallet</p>
+                  <p>
+                    Step 2: On the Lending tab, choose the token and protocol
+                    you want to lend.
+                  </p>
+                  <p>Step 3: Click the ‘Supply’ button and enter the amount.</p>
                 </Box>
-                <Box
+                {/* <Box
                   as="button"
-                  className="w-24 h-11 bg-indigo-500 rounded-full shadow text-white text-base font-semibold hover:bg-indigo-600"
+                  className="w-24 h-11 !bg-indigo-500 rounded-full shadow text-white text-base font-semibold hover:!bg-indigo-400 cursor-pointer"
                 >
                   Discover
-                </Box>
+                </Box> */}
               </Box>
             </Box>
 
@@ -39,41 +43,49 @@ const Offer = () => {
               <Box className="w-96 max-[386px]:w-auto p-6 boxed-gradient-child bg-white bg-opacity-40 rounded-3xl border flex-col justify-start items-start gap-6 inline-flex">
                 <Box className=" flex justify-between w-full items-center">
                   <Box className="grow shrink basis-0 text-neutral-700 text-3xl font-bold">
-                    Positions
+                    Staking
                   </Box>
                   <SVG src={trendUp} />
                 </Box>
                 <Box className=" text-primary-400 text-base font-medium">
-                  Earn staking rewards with your APT with
-                  <br />
-                  ease!
+                  <p>Step 1: Connect wallet</p>
+                  <p>
+                    Step 2: On the Staking tab, choose the protocol that you
+                    want to stake
+                  </p>
+                  <p>Step 3: Click the ‘Stake’ button and enter the amount.</p>
                 </Box>
-                <Box
+                {/* <Box
                   as="button"
                   className="w-24 h-11 bg-indigo-500 rounded-full shadow text-white text-base font-semibold hover:bg-indigo-600"
                 >
                   Discover
-                </Box>
+                </Box> */}
               </Box>
             </Box>
             <Box className="border-gradient">
               <Box className="w-96 boxed-gradient-child max-[386px]:w-auto p-6 bg-white bg-opacity-40 rounded-3xl border flex-col justify-start items-start gap-6 inline-flex">
                 <Box className=" flex justify-between w-full items-center">
                   <Box className="grow shrink basis-0 text-neutral-700 text-3xl font-bold">
-                    Staking
+                    Positions
                   </Box>
                   <SVG src={pieChart} />
                 </Box>
                 <Box className=" text-primary-400 text-base font-medium">
-                  Connect your wallet to see positions you committed via
-                  VibrantX
+                  <p>Step 1: Connect Wallet</p>
+                  <p>
+                    Step 2: Click on the ‘Positions’ tab to go to your Portfolio
+                  </p>
+                  <p>
+                    Step 3: Monitor your token balance, strategies and rewards.
+                  </p>
                 </Box>
-                <Box
+                {/* <Box
                   as="button"
                   className="w-24 h-11 bg-indigo-500 rounded-full shadow text-white text-base font-semibold hover:bg-indigo-600"
                 >
                   Discover
-                </Box>
+                </Box> */}
               </Box>
             </Box>
           </Box>
