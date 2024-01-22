@@ -7,5 +7,5 @@
       "use": "@now/static"
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [{ "source": "/dist/apps/vibrantx(.*)", "destination": "/" }]
 }
