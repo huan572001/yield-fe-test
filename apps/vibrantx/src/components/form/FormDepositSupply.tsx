@@ -6,6 +6,7 @@ import {
   calculateValueWithDecimals,
   convertValueToDecimals,
   formatNumberWithDecimal,
+  formatToLocaleString,
   getTokenInfo,
   getTokenPrice,
   keepNumericAndDecimal,
@@ -28,6 +29,9 @@ import {
 import { Field, Form, Formik, FormikErrors, useFormik } from "formik";
 import { useEffect, useState } from "react";
 // import SVG from "react-inlinesvg";
+import { Strategies } from "@/services";
+import { ITokenInfo } from "@/utils/utils.type";
+import { useIntl } from "react-intl";
 import * as Yup from "yup";
 import { useAptos } from "../AptosContext";
 import { ToastModal } from "../toast";
@@ -35,19 +39,34 @@ import { ToastModal } from "../toast";
 interface FormValues {
   amount: string;
 }
-
+interface prop {
+  title?: boolean;
+  strategies?: Strategies;
+}
 const moduleAddress = import.meta.env.VITE_APP_MODULE_ADDRESS;
 
-export const FormDepositSupply = () => {
+export const FormDepositSupply = ({ title = true, strategies }: prop) => {
   // const [nextStep, setNextStep] = useState<boolean>(false);
   const aptos = useAptos();
   const toast = useToast();
+  const intl = useIntl();
   const dispatch = useAppDispatch();
   const { modalSupply } = useAppSelector((state) => state.modal);
-  const tokenInfo =
-    modalSupply?.strategies?.stakeToken &&
-    modalSupply?.strategies?.stakeToken![0] &&
-    getTokenInfo(modalSupply?.strategies?.stakeToken![0]);
+  const tokenInfoResult = () => {
+    if (strategies) {
+      return (
+        strategies?.stakeToken &&
+        strategies?.stakeToken![0] &&
+        getTokenInfo(strategies?.stakeToken![0])
+      );
+    }
+    return (
+      modalSupply?.strategies?.stakeToken &&
+      modalSupply?.strategies?.stakeToken![0] &&
+      getTokenInfo(modalSupply?.strategies?.stakeToken![0])
+    );
+  };
+  const tokenInfo: ITokenInfo | undefined = tokenInfoResult();
 
   const { account, connected, signAndSubmitTransaction } = useWallet();
   const [loading, setLoading] = useState<boolean>(true);
@@ -75,25 +94,6 @@ export const FormDepositSupply = () => {
     onSubmit: () => {},
     validationSchema: validationSchema,
   });
-
-  const handleClickMaxOrHaft = (
-    div: number,
-    setFieldValue: (
-      field: string,
-      value: any,
-      shouldValidate?: boolean | undefined
-    ) => Promise<void | FormikErrors<{
-      amount: string;
-    }>>
-  ) => {
-    setFieldValue(
-      "amount",
-      formatNumberWithDecimal(
-        String(Number(availableBalance) / div),
-        tokenInfo?.decimals
-      )
-    );
-  };
 
   const supplyPool = async (amount: number) => {
     if (!account) return [];
@@ -132,7 +132,26 @@ export const FormDepositSupply = () => {
       console.log(error);
     }
   };
-
+  const handleClickMaxOrHaft = (
+    div: number,
+    setFieldValue: (
+      field: string,
+      value: any,
+      shouldValidate?: boolean | undefined,
+    ) => Promise<void | FormikErrors<{
+      amount: string;
+    }>>,
+  ) => {
+    setFieldValue(
+      "amount",
+      formatNumberWithDecimal(
+        div === 1 && Number(availableBalance) > 0.01
+          ? String(Number(availableBalance) / div - 0.01)
+          : String(Number(availableBalance) / div),
+        tokenInfo?.decimals,
+      ),
+    );
+  };
   useEffect(() => {
     if (account?.address && tokenInfo?.token_type?.type) {
       (async () => {
@@ -143,7 +162,7 @@ export const FormDepositSupply = () => {
         const tokenPrice = getTokenPrice(tokenInfo?.token_type?.type);
         const balance = calculateValueWithDecimals(
           result,
-          tokenInfo?.decimals ?? 6
+          tokenInfo?.decimals ?? 6,
         );
         setAvailableBalance(balance);
         setCurrentPrice(Number(tokenPrice));
@@ -154,9 +173,12 @@ export const FormDepositSupply = () => {
 
   return (
     <>
-      <Box className="text-[24px] font-medium text-primary-500 leading-[32px]">
-        Lend
-      </Box>
+      {title && (
+        <Box className="text-[24px] font-medium text-primary-500 leading-[32px]">
+          {intl.formatMessage({ id: "modal.lend" })}
+        </Box>
+      )}
+
       <Formik initialValues={formik.initialValues} onSubmit={formik.submitForm}>
         <Form>
           <VStack
@@ -165,7 +187,9 @@ export const FormDepositSupply = () => {
             className="font-medium text-primary-400"
           >
             <Box className="w-full">
-              <Box>Your Asset</Box>
+              <Box className="text-neutralGray-600">
+                {intl.formatMessage({ id: "modal.your_asset" })}
+              </Box>
               <Box className="p-3 rounded-[16px] border-[1px] border-solid border-primary-300 w-full flex flex-col gap-4 bg-primary-50">
                 <Flex justifyContent={"space-between"} alignItems={"center"}>
                   <Flex gap={1}>
@@ -173,7 +197,7 @@ export const FormDepositSupply = () => {
                       onClick={() =>
                         handleClickMaxOrHaft(1, formik.setFieldValue)
                       }
-                      className="!py-[2px] px-2  !h-auto !text-primaryPurple-600 !bg-overlay-20 hover:!bg-primaryPurple-500 hover:!text-white"
+                      className="!py-[2px] px-2  !h-auto !text-primary-600 !bg-blue-200"
                     >
                       Max
                     </AppButton>
@@ -181,13 +205,13 @@ export const FormDepositSupply = () => {
                       onClick={() =>
                         handleClickMaxOrHaft(2, formik.setFieldValue)
                       }
-                      className="!py-[2px] px-2  !h-auto !text-primaryPurple-600 !bg-overlay-20 hover:!bg-primaryPurple-500 hover:!text-white"
+                      className="!py-[2px] px-2  !h-auto !text-primary-600 !bg-blue-200"
                     >
                       Half
                     </AppButton>
                   </Flex>
                   <Flex alignItems={"center"} gap={1}>
-                    <Box>Available: </Box>
+                    <Box>{intl.formatMessage({ id: "modal.available" })}</Box>
                     {!connected ? (
                       "-"
                     ) : loading ? (
@@ -209,7 +233,8 @@ export const FormDepositSupply = () => {
                         id="amount"
                         name="amount"
                         type="text"
-                        className="!text-[24px] !text-primary-500 !outline-none !border-none !rounded-full hover:!border-none  focus-visible:!border-none focus-visible:!shadow-none !shadow-none"
+                        placeholder="0"
+                        className="!text-[24px] !text-neutralGray-700 !outline-none !border-none !rounded-full hover:!border-none  focus-visible:!border-none focus-visible:!shadow-none !shadow-none"
                         value={formik.values.amount}
                         disabled={!connected}
                         validate={(value: string) => {
@@ -227,13 +252,23 @@ export const FormDepositSupply = () => {
                         onChange={(e: React.ChangeEvent<any>) => {
                           const amount = formatNumberWithDecimal(
                             keepNumericAndDecimal(e.target.value),
-                            tokenInfo?.decimals ?? 6
+                            tokenInfo?.decimals ?? 6,
                           );
                           formik.setFieldValue("amount", amount);
                         }}
                       />
                       <InputRightAddon className="!border-none !bg-[transparent] !p-0">
-                        <Flex gap={"8px"}>
+                        <Flex gap={"4px"}>
+                          <Flex>
+                            ~$
+                            {formatToLocaleString(
+                              calculateValue(
+                                formik.values.amount ? formik.values.amount : 0,
+                                currentPrice,
+                              ),
+                              4,
+                            )}
+                          </Flex>
                           <img
                             src={tokenInfo?.logo_url ?? ""}
                             className="w-5 h-5"
@@ -249,16 +284,6 @@ export const FormDepositSupply = () => {
                         {formik.errors.amount}
                       </span>
                     )}
-                    <Flex justifyContent={"flex-end"}>
-                      ~$
-                      {formatNumberWithDecimal(
-                        calculateValue(
-                          formik.values.amount ? formik.values.amount : 0,
-                          currentPrice
-                        ),
-                        4
-                      )}
-                    </Flex>
                   </FormControl>
                 </Flex>
               </Box>
@@ -270,7 +295,7 @@ export const FormDepositSupply = () => {
                 isDisabled={!(formik.isValid && formik.dirty)}
                 onClick={() => supplyPool(Number(formik.values.amount))}
               >
-                Supply
+                {intl.formatMessage({ id: "modal.supply" })}
               </AppButton>
             ) : (
               <AppButton
@@ -278,9 +303,57 @@ export const FormDepositSupply = () => {
                 className="!bg-blue-500 !text-white"
                 onClick={() => dispatch(setOpenModal())}
               >
-                Connect Wallet
+                {intl.formatMessage({ id: "modal.connect_wallet" })}
               </AppButton>
             )}
+            <Flex
+              width={"100%"}
+              flexDirection={"column"}
+              gap={"10px"}
+              className="text-neutralGray-500"
+            >
+              <Flex justifyContent={"space-between"}>
+                <Box>{intl.formatMessage({ id: "modal.deposit_value" })}</Box>
+                <Box className="text-neutral-700 font-bold">
+                  {`${Number(
+                    formik.values.amount,
+                  )} ${tokenInfo?.official_symbol}`}{" "}
+                  <span className="text-neutralGray-400 font-medium">
+                    (~$
+                    {formatToLocaleString(
+                      calculateValue(
+                        formik.values.amount ? formik.values.amount : 0,
+                        currentPrice,
+                      ),
+                      4,
+                    )}
+                    )
+                  </span>
+                </Box>
+              </Flex>
+              <Flex justifyContent={"space-between"}>
+                <Box>
+                  {intl.formatMessage({ id: "modal.loan_to_value_ratio" })}
+                </Box>
+                <Box className="text-neutral-700 font-bold">
+                  {modalSupply.strategies.ariesDetail?.maximumLtv}%
+                </Box>
+              </Flex>
+              <Flex justifyContent={"space-between"}>
+                <Box>{intl.formatMessage({ id: "modal.supply_apy" })}</Box>
+                <Box className="text-neutral-700 font-bold">
+                  {modalSupply.strategies.apr}%
+                </Box>
+              </Flex>
+              <Flex justifyContent={"space-between"}>
+                <Box>
+                  {intl.formatMessage({ id: "modal.utilization_ratio" })}
+                </Box>
+                <Box className="text-neutral-700 font-bold">
+                  {modalSupply.strategies.ariesDetail?.optionalUtilization}%
+                </Box>
+              </Flex>
+            </Flex>
           </VStack>
         </Form>
       </Formik>

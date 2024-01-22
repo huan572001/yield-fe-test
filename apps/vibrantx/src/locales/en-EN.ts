@@ -1,7 +1,8 @@
 import homepage from "./en-EN/homepage";
+import mpodal from "./en-EN/modal";
 import newhomepage from "./en-EN/newhomepage";
-import tokenpage from "./en-EN/tokenpage";
 import portfoliopage from "./en-EN/portfoliopage";
+import tokenpage from "./en-EN/tokenpage";
 
 export default {
   //nav
@@ -51,4 +52,5 @@ export default {
   ...tokenpage,
   ...newhomepage,
   ...portfoliopage,
+  ...mpodal,
 };

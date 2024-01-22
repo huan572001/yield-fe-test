@@ -1,8 +1,8 @@
-import { useLayout } from '@/hooks/useLayout';
-import enEN from '@/locales/en-EN';
-import type { PropsWithChildren } from 'react';
-import { useEffect, useState } from 'react';
-import { IntlProvider as Provider } from 'react-intl';
+import { useLayout } from "@/hooks/useLayout";
+import enEN from "@/locales/en-EN";
+import type { PropsWithChildren } from "react";
+import { useEffect, useState } from "react";
+import { IntlProvider as Provider } from "react-intl";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function IntlProvider({ children }: PropsWithChildren<any>) {

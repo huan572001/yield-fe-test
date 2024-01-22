@@ -4,13 +4,24 @@ import { truncateAddress } from "@/utils/functions";
 import routerLinks from "@/utils/routerLink";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { useIntl } from "react-intl";
 import { useNavigate } from "react-router-dom";
+import ReactGA from "react-ga4";
 export const ButtonConnectWalletV2 = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const intl = useIntl();
   const { wallet, account, connected, disconnect } = useWallet();
+  useEffect(() => {
+    if (connected) {
+      ReactGA.event({
+        category: "Connect Wallet",
+        action: "Connect Wallet",
+        nonInteraction: true,
+      });
+    }
+  }, [connected]);
 
   return (
     <>

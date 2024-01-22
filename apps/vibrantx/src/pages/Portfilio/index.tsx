@@ -3,12 +3,17 @@ import { Box } from "@chakra-ui/react";
 import { useIntl } from "react-intl";
 import { TextGradient } from "./index.style";
 import { Helmet } from "react-helmet-async";
+import { main_screen } from "@/assets/home";
 
 export const Portfilio = () => {
   const intl = useIntl();
 
   return (
-    <Box className="bg-cover bg-center bg-no-repeat h-[100vh]">
+    <Box
+      className="!bg-cover !bg-center !bg-no-repeat h-[100vh]"
+      backgroundImage={`url(${main_screen})`}
+      willChange={"scroll-position"}
+    >
       <Helmet>
         <title>Portfilio</title>
         <meta

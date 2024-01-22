@@ -17,6 +17,9 @@ export default {
         10: "#000",
         100: "#131722",
       },
+      red: {
+        520: "#FF4D4F33",
+      },
       gray: {
         100: "#898787",
         200: "#F1F0EE",
@@ -78,8 +81,10 @@ export default {
         600: "#5B53E6",
       },
       primaryPurple: {
-        600: "#5B53E6",
+        200: "#E0DEFF",
+        300: "#A39DFF",
         500: "#655CFF",
+        600: "#5B53E6",
       },
       error: {
         25: "#FFFBFA",
@@ -90,11 +95,22 @@ export default {
         20: "#655CFF33",
       },
       neutralGray: {
+        50: "#F9FAFB",
+        200: "#EAECF0",
+        400: "#98A2B3",
         500: "#667085",
         600: "#475467",
         700: "#344054",
       },
+      yellow: {
+        50: "#FFF7E6",
+      },
+      amber: {
+        200: "#FFD591",
+        600: "#D46B08",
+      },
     },
+
     fontFamily: {
       sans: ['"Inter"'],
       poppins: ['"Poppins"'],

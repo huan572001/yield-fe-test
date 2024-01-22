@@ -30,20 +30,20 @@ const ConnectWalletRow: React.FC<{
   return (
     <div>
       <div
-        className='items-center justify-between bg-gray-600 p-[1rem] flex gap-[1rem] px-[16px] hover:cursor-pointer shadow-sm rounded-[12px]'
+        className="items-center justify-between bg-gray-600 p-[1rem] flex gap-[1rem] px-[16px] hover:cursor-pointer shadow-sm rounded-[12px]"
         onClick={() => onClick()}
       >
-        <div className='flex gap-[8px] items-center'>
+        <div className="flex gap-[8px] items-center">
           <Avatar
-            className='flex items-center w-[2rem] h-[2rem]'
+            className="flex items-center w-[2rem] h-[2rem]"
             src={wallet.icon}
             style={{ width: "30px", height: "30px" }}
           />
-          <p className='text-lg font-semibold'>{wallet.name}</p>
+          <p className="text-lg font-semibold">{wallet.name}</p>
         </div>
         <Flex alignItems={"center"} justify={"center"}>
-          <Box className='dot-active'></Box>
-          <Box className='font-black text-[11px] uppercase'>
+          <Box className="dot-active"></Box>
+          <Box className="font-black text-[11px] uppercase">
             {intl.formatMessage({ id: "modalWallet.detected" })}
           </Box>
         </Flex>
@@ -56,15 +56,16 @@ const InstallWalletRow: React.FC<{ wallet: Wallet }> = ({ wallet }) => {
   return (
     <a
       href={wallet.url}
-      target='_blank'
-      className='items-center justify-between bg-gray-600 p-[1rem] flex gap-[1rem] px-[16px] hover:cursor-pointer shadow-sm rounded-[12px]'
+      target="_blank"
+      rel="noreferrer"
+      className="items-center justify-between bg-gray-600 p-[1rem] flex gap-[1rem] px-[16px] hover:cursor-pointer shadow-sm rounded-[12px]"
     >
       <Flex alignItems={"center"} gap={2}>
         <Avatar
-          className='flex items-center !w-[30px] !h-[30px]'
+          className="flex items-center !w-[30px] !h-[30px]"
           src={wallet.icon}
         />
-        <p className='text-lg font-semibold'>{wallet.name}</p>
+        <p className="text-lg font-semibold">{wallet.name}</p>
       </Flex>
     </a>
   );
@@ -93,7 +94,7 @@ export const ModalWalletConnect = () => {
         wallet.readyState === WalletReadyState.Loadable;
 
       const Container: React.FC<PropsWithChildren> = ({ children }) => {
-        return <div className='py-[0.5]'>{children}</div>;
+        return <div className="py-[0.5]">{children}</div>;
       };
 
       // The user is on a mobile device
@@ -138,16 +139,16 @@ export const ModalWalletConnect = () => {
       isCentered
     >
       <ModalOverlay />
-      <ModalContent className='!rounded-[24px] py-[24px]'>
-        <ModalHeader className='text-center mt-2'>
+      <ModalContent className="!rounded-[24px] py-[24px]">
+        <ModalHeader className="text-center mt-2">
           {intl.formatMessage({ id: "modalWallet.title" })}
-          <Box className='!font-normal !text-[14px] mt-2'>
+          <Box className="!font-normal !text-[14px] mt-2">
             {intl.formatMessage({ id: "modalWallet.sub-title" })}
           </Box>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <div className='flex flex-col gap-3'>{renderWalletsList()}</div>
+          <div className="flex flex-col gap-3">{renderWalletsList()}</div>
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -1,9 +1,15 @@
+import { ReactNode } from "react";
+
 export interface IResponse<Data> {
   data: Data;
   message: string;
   status: number;
 }
 
+export interface IParamsGetStrategies {
+  mode?: string;
+  protocol?: string;
+}
 export interface IResponseGetStrategies {
   data: Strategies[];
 }
@@ -84,7 +90,59 @@ export interface AptosCoin {
     data: {
       current_price: number;
     };
-    metadata: {};
+    metadata: object;
   };
-  metadata: {};
+  metadata: object;
+}
+export interface CartOfferData {
+  title: ReactNode;
+  body: ReactNode;
+  bodyHover: ReactNode;
+  icon: string;
+}
+
+export interface HistoryStratragis {
+  apr: string;
+  strategyId: string;
+  totalValueLocked: string;
+  createdAt: string;
+  timestamp: string;
+}
+
+export interface IParamsGetPosition {
+  address: string;
+}
+export interface IPositions {
+  id: string;
+  isEnabled: boolean;
+  protocols: string[];
+  apr: string;
+  description: string;
+  pid: string;
+  poolType: `${string}::${string}::${string}`;
+  stakeToken: `${string}::${string}::${string}`[];
+  totalValueLocked: string;
+  name: string;
+  displayName: string;
+  strategyType: string;
+  rewardToken: `${string}::${string}::${string}`[];
+  ariesDetail: AriesDetail | null;
+  positionToken: `${string}::${string}::${string}`;
+  feeToken: string[] | string;
+  depositFee: string;
+  withdrawalFee: string;
+  depositSwapFee: string;
+  withdrawalSwapFee: string;
+  positions: string[];
+}
+
+export interface IWithdrawInfo {
+  type: string;
+  data: WithDraw;
+}
+
+export interface WithDraw {
+  last_withdraw_reset_timestamp: string;
+  withdraw_amount: string;
+  withdraw_limit: string;
 }

@@ -1,73 +1,46 @@
 // import warningIcon from "@/assets/alert-triangle.svg";
 // import { arrowrRight } from "@/assets/home";
-import iconToken from "@/common/icons";
 import { useAptos } from "@/components/AptosContext";
+import { ToastModal } from "@/components/toast";
 import { useAppDispatch, useAppSelector } from "@/hooks/store";
 import { setOpenModal } from "@/redux/slice/modalSlice";
-import { Strategies } from "@/services";
-import { columnsPositions } from "@/utils/constants";
+import { IUserPositions } from "@/redux/slice/strategiesSlice";
 import {
   calculateValue,
   calculateValueWithDecimals,
-  formatLargeNumber,
-  formatNumberWithDecimal,
-  getDecimalAndLogoUrl,
   getProtocolNameAndFunc,
   getTokenInfo,
   getTokenPrice,
 } from "@/utils/functions";
-import { MoveValue, ViewRequest } from "@aptos-labs/ts-sdk";
+import { ViewRequest } from "@aptos-labs/ts-sdk";
 import {
   InputTransactionData,
   useWallet,
 } from "@aptos-labs/wallet-adapter-react";
-import {
-  Box,
-  Skeleton,
-  Stack,
-  Tag,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useToast,
-} from "@chakra-ui/react";
-import clsx from "clsx";
-import { useEffect, useState } from "react";
-import SVG from "react-inlinesvg";
+import { Box, Skeleton, Stack, useToast } from "@chakra-ui/react";
+import _ from "lodash";
+import { memo, useEffect, useState } from "react";
 import { useIntl } from "react-intl";
-import { AppButton, StyledTableContainer, TableHome, TrTable } from "..";
-import { ToastModal } from "@/components/toast";
-
-interface IDataPosition extends Strategies {
-  amount: string | number;
-  value: string;
-  positions: MoveValue[];
-  rewards: string;
-}
+import { AppButton } from "..";
+import TablePosition from "./TablePosition";
 
 const moduleAddress = import.meta.env.VITE_APP_MODULE_ADDRESS;
 
-export const Positions = () => {
+export const Positions = memo(() => {
   const intl = useIntl();
   const aptos = useAptos();
   const { account, connected, signAndSubmitTransaction } = useWallet();
   const dispatch = useAppDispatch();
   const { strategies } = useAppSelector((state) => state.strategies);
   const [loading, setLoading] = useState<boolean>(true);
-  const [dataPosition, setDataPosition] = useState<IDataPosition[]>([]);
+  const [dataPosition, setDataPosition] = useState<IUserPositions[]>([]);
   const toast = useToast();
 
   const handleClaimRewards = async (
     protocols: string,
-    rewardsAddress: `${string}::${string}::${string}`
+    rewardsAddress: `${string}::${string}::${string}`,
   ) => {
     const protocol = getProtocolNameAndFunc(protocols);
-    console.log(
-      `${moduleAddress}::${protocol.protocol}::${protocol.funcClaimRewards}`,
-      rewardsAddress
-    );
     const transaction: InputTransactionData = {
       data: {
         function: `${moduleAddress}::${protocol.protocol}::${protocol.funcClaimRewards}`,
@@ -97,10 +70,11 @@ export const Positions = () => {
         duration: 9000,
         isClosable: true,
       });
-    } catch (error: any) {
+    } catch (error) {
       console.log(error);
     }
   };
+
   const renderContent = () => {
     if (!connected) {
       return (
@@ -137,136 +111,10 @@ export const Positions = () => {
     } else {
       return (
         <>
-          <StyledTableContainer className="mt-[38px] bg-white bg-opacity-40">
-            <TableHome variant="simple">
-              <Thead>
-                <Tr>
-                  {columnsPositions.map((column) => (
-                    <Th
-                      className={clsx({
-                        "!text-end":
-                          column.key === "amount" ||
-                          column.key === "apr" ||
-                          column.key === "value" ||
-                          column.key === "rewards",
-                      })}
-                      key={column.key}
-                    >
-                      {column.label}
-                    </Th>
-                  ))}
-                  <Th className="flex gap-1 justify-center">
-                    <Box>Action</Box>
-                    {/* <Tooltip
-                      hasArrow
-                      label='Blocked rewards due to VPN or US/region restrictions.'
-                      bg='white'
-                      color='primary.500'
-                      placement='top'
-                      maxWidth='160px'
-                      padding={"8px 12px"}
-                      className='!text-center !rounded-[8px]'
-                    >
-                      <Box>
-                        <SVG src={warningIcon} />
-                      </Box>
-                    </Tooltip> */}
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {dataPosition
-                  .sort(
-                    (a, b) =>
-                      a.name.localeCompare(b.name, "en", {
-                        sensitivity: "base",
-                      }) &&
-                      a.protocols[0]!.localeCompare(b.protocols[0]!) &&
-                      a.strategyType.localeCompare(b.strategyType)
-                  )
-                  .map((ele) => {
-                    const tokenInfo = getDecimalAndLogoUrl(ele.name);
-                    return (
-                      <TrTable key={ele.id}>
-                        <Td>
-                          <Box className="flex gap-2 items-center">
-                            <img
-                              src={tokenInfo?.logo_url ?? ""}
-                              className="w-8 h-8 rounded-full"
-                            />
-                            {ele.displayName}
-                          </Box>
-                        </Td>
-                        <Td>
-                          <Tag
-                            className={clsx("!px-3 !py-1 !rounded-full", {
-                              "!bg-[#FEF9F5] !text-[#F2994A]":
-                                ele.strategyType === "Lending",
-                              "!bg-[#F1FCF6] !text-[#219653]":
-                                ele.strategyType === "Staking",
-                            })}
-                          >
-                            {ele.strategyType}
-                          </Tag>
-                        </Td>
-                        <Td>
-                          <Box className="flex gap-2 items-center">
-                            <SVG
-                              width={32}
-                              height={32}
-                              src={
-                                iconToken[ele.protocols[0]!.toLocaleLowerCase()]
-                              }
-                            />
-                            {
-                              getProtocolNameAndFunc(ele.protocols[0]!)
-                                .protocolDisplayName
-                            }
-                          </Box>
-                        </Td>
-                        <Td className="!text-right">
-                          {Number(ele.amount).toFixed(2)}
-                        </Td>
-                        <Td className="!text-right">
-                          ${Number(ele.value).toFixed(2)}
-                        </Td>
-                        <Td className="!text-right">
-                          {Number(ele.apr).toFixed(2)}%
-                        </Td>
-                        <Td className="!text-right">
-                          {Number(ele.rewards)
-                            ? `$${formatLargeNumber(
-                                formatNumberWithDecimal(ele.rewards, 2)
-                              )}`
-                            : "-"}
-                        </Td>
-                        <Td className="!text-center">
-                          <AppButton
-                            onClick={() => {
-                              handleClaimRewards(
-                                ele.protocols[0]!,
-                                ele.positionToken
-                              );
-                            }}
-                            className={clsx("!bg-blue-200 !text-blue-500", {
-                              disabled:
-                                ele.strategyType === "Staking" ||
-                                (ele.positions && ele.positions[1]! === "0"),
-                            })}
-                            isDisabled={
-                              ele.strategyType === "Staking" ||
-                              (ele.positions && ele.positions[1]! === "0")
-                            }
-                          >
-                            Claim
-                          </AppButton>
-                        </Td>
-                      </TrTable>
-                    );
-                  })}
-              </Tbody>
-            </TableHome>
-          </StyledTableContainer>
+          <TablePosition
+            dataPosition={dataPosition}
+            handleClaimRewards={handleClaimRewards}
+          />
           <Box className="text-primary-400 font-medium">
             You can only view the positions you have opened via VibrantX Finance
           </Box>
@@ -294,25 +142,14 @@ export const Positions = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const positionData: IDataPosition[] = [];
+      const positionData: IUserPositions[] = [];
 
       if (account?.address && strategies?.length) {
         const apiCalls = strategies.map(async (item) => {
           if (item.protocols[0]) {
-            const functionsView = (protocol: string) => {
-              switch (protocol.toLocaleLowerCase()) {
-                case "amnis":
-                  return `${moduleAddress}::amnis::get_users_position` as `${string}::${string}::${string}`;
-                case "aries":
-                  return `${moduleAddress}::aries::get_position` as `${string}::${string}::${string}`;
-                case "thala-lsd":
-                  return `${moduleAddress}::thala_lsd::get_users_position` as `${string}::${string}::${string}`;
-                default:
-                  return `${moduleAddress}::amnis::get_users_position` as `${string}::${string}::${string}`;
-              }
-            };
+            const protocolAndFunc = getProtocolNameAndFunc(item.protocols[0]);
             const payload: ViewRequest = {
-              function: functionsView(item.protocols[0]),
+              function: `${moduleAddress}::${protocolAndFunc.protocol}::${protocolAndFunc.funcUserPosition}`,
               typeArguments:
                 item.protocols[0] === "Aries" ? [item.poolType] : [],
               functionArguments: [account.address],
@@ -325,7 +162,7 @@ export const Positions = () => {
                 const tokenInfo = getTokenInfo(item.positionToken);
                 const amount = calculateValueWithDecimals(
                   Number(position[0]),
-                  tokenInfo?.decimals
+                  tokenInfo?.decimals,
                 );
                 const tokenPrice = getTokenPrice(item.positionToken);
                 const value = calculateValue(amount, tokenPrice);
@@ -334,21 +171,23 @@ export const Positions = () => {
                 const rewards = position && position[1]! ? position[1] : 0;
                 const amountRewards = calculateValueWithDecimals(
                   Number(rewards),
-                  rewardsInfo.decimals ?? 8
+                  rewardsInfo.decimals ?? 8,
                 );
                 const rewardsPrice = getTokenPrice(item.rewardToken[0]!);
-                const ValueRewards = calculateValue(
+                const valueRewards = calculateValue(
                   amountRewards,
-                  rewardsPrice
+                  rewardsPrice,
                 );
 
-                positionData.push({
-                  ...item,
-                  amount,
-                  value,
-                  positions: position,
-                  rewards: ValueRewards,
-                });
+                if (Number(value) > 0.01 || Number(valueRewards) > 0.01) {
+                  positionData.push({
+                    ...item,
+                    amount,
+                    value,
+                    positions: position as string[],
+                    rewards: valueRewards,
+                  });
+                }
               }
             } catch (error) {
               console.error(`Error fetching data for ${item.name}:`, error);
@@ -360,13 +199,47 @@ export const Positions = () => {
         await Promise.all(apiCalls);
 
         // Update state after all calls are completed
-        setDataPosition(positionData);
+        setDataPosition((preState) => {
+          if (
+            _.isEqual(
+              preState.sort((a, b) =>
+                a.id
+                  .toLocaleLowerCase()
+                  .localeCompare(b.id.toLocaleLowerCase()),
+              ),
+              positionData.sort((a, b) =>
+                a.id
+                  .toLocaleLowerCase()
+                  .localeCompare(b.id.toLocaleLowerCase()),
+              ),
+            )
+          ) {
+            return preState;
+          }
+          return positionData;
+        });
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [account?.address, strategies?.length]);
+    const data = setInterval(fetchData, 30000);
+
+    return () => clearInterval(data);
+  }, [account?.address, strategies]);
+
+  // useQuery({
+  //   queryKey: ["getUserPositions", account?.address],
+  //   queryFn: ({ queryKey }) => {
+  //     const [, address] = queryKey;
+  //     if (address) {
+  //       return dispatch(getPositions({ address: address }));
+  //     } else {
+  //       return Promise.resolve(null);
+  //     }
+  //   },
+  //   refetchOnWindowFocus: true,
+  // });
 
   return (
     <Box className="flex flex-col gap-[60px]">
@@ -383,4 +256,4 @@ export const Positions = () => {
       <Box className="flex flex-col gap-3">{renderContent()}</Box>
     </Box>
   );
-};
+});

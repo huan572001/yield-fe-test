@@ -62,7 +62,7 @@ export const DropdownGradient = ({
             <Box className="flex gap-2 items-center">
               <span className="!text-5xl  md:!text-6xl bg-text-gradient">
                 {options.find((option) => option.key === selectedKey)?.label ||
-                  ""}
+                  "Earn"}
               </span>
               <Icon
                 as={FaAngleDown}

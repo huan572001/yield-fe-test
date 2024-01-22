@@ -1,7 +1,7 @@
 const routerLinks = (name: string) => {
   const array: any = {
     Home: "/",
-    Tokenpage: "/tokenpage",
+    Tokenpage: "/strategy",
     Portfolio: "/portfolio",
   }; // 💬 generate link to here
   return array[name];

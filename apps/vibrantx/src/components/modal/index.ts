@@ -1,4 +1,6 @@
+export * from "./ModalAddLiquidity";
 export * from "./ModalDynamically";
+export * from "./ModalRemoveLiquidity";
 export * from "./ModalSearch";
 export * from "./ModalStake";
 export * from "./ModalSupply";

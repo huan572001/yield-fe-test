@@ -1,6 +1,9 @@
-import { request } from '@/config/request';
-import React from 'react';
-import { QueryClientProvider as Providers, QueryClient } from 'react-query';
+import { request } from "@/config/request";
+import {
+  QueryClientProvider as Providers,
+  QueryClient,
+} from "@tanstack/react-query";
+import React from "react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,8 +18,7 @@ const queryClient = new QueryClient({
 });
 
 export default function QueryClientProvider({
-  children,
-} // eslint-disable-next-line @typescript-eslint/no-explicit-any
-: React.PropsWithChildren<Record<string, any>>) {
+  children, // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: React.PropsWithChildren<Record<string, any>>) {
   return <Providers client={queryClient}>{children}</Providers>;
 }

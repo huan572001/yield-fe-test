@@ -9,6 +9,7 @@ import {
 import clsx from "clsx";
 export const questions = [
   {
+    //1
     label: "How does lending work?",
     value: (
       <>
@@ -20,7 +21,8 @@ export const questions = [
     ),
   },
   {
-    label: "How does lending work?",
+    //2
+    label: "What are the risks for lenders?",
     value: (
       <div className="grid gap-3">
         <div>
@@ -50,10 +52,24 @@ export const questions = [
     ),
   },
   {
-    label: "Is VibrantX audited",
-    value: <>Yes. You can view the protocol audits here?</>,
+    //3
+    label: "Is VibrantX audited?",
+    value: (
+      <div>
+        Yes. You can view the protocol audits{" "}
+        <a
+          target="_blank"
+          href="https://docs.vibrantx.finance/audit"
+          className="text-blue-500"
+        >
+          {" "}
+          here.
+        </a>
+      </div>
+    ),
   },
   {
+    //4
     label: "How does VibrantX protect users from risk?",
     value: (
       <div>
@@ -71,7 +87,8 @@ export const questions = [
     ),
   },
   {
-    label: "Where does the yield (APY) come from?",
+    //5
+    label: "Where does the yield (APY) come from when users stake?",
     value: (
       <div>
         <span>
@@ -88,11 +105,16 @@ export const questions = [
         <a
           href="https://docs.thala.fi/thala-protocol-design/liquid-staking-thapt"
           className="text-indigo-500 t"
+          target="_blank"
         >
           https://docs.thala.fi/thala-protocol-design/liquid-staking-thapt
         </a>
         <span> & </span>
-        <a href="https://stake.amnis.finance/" className="text-indigo-500 ">
+        <a
+          href="https://stake.amnis.finance/"
+          target="_blank"
+          className="text-indigo-500 "
+        >
           https://stake.amnis.finance/
         </a>
         <span>) if you want to learn more about the dual token model.</span>
@@ -100,7 +122,8 @@ export const questions = [
     ),
   },
   {
-    label: "When can I withdraw?",
+    //6
+    label: "When can users withdraw from their stake position?",
     value: (
       <div>
         There are two ways to get your funds back from staking: You can either
@@ -112,7 +135,8 @@ export const questions = [
     ),
   },
   {
-    label: "What are the risks?",
+    //7
+    label: "What are the risks of staking strategies?",
     value: (
       <div>
         By delegating your APT to the staking protocols, you trust the protocols

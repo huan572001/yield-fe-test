@@ -35,8 +35,9 @@ export const columnsPositions = [
   { label: "Protocol", key: "protocol" },
   { label: "Amount", key: "amount" },
   { label: "Value", key: "value" },
-  { label: "APR", key: "apr" },
+  { label: "APR", key: "apr", hidden: true },
   { label: "Rewards", key: "rewards" },
+  { label: "Action", key: "action" },
 ];
 
 export const columnsPositions2 = [
@@ -70,4 +71,10 @@ export const columnsStaking = [
 export enum STRATEGY_TYPE {
   STAKING = "Staking",
   LENDING = "Lending",
+  LIQUIDITY = "Liquidity",
+}
+export enum ASSET_TYPE {
+  LAYERZERO = "layerzero",
+  NATIVE = "native",
+  WORMHOLE = "wormhole",
 }

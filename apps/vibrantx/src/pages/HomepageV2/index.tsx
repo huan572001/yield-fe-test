@@ -1,8 +1,10 @@
 import { homepageBgColer, movebit1 } from "@/assets/home";
 import withPageTracking from "@/components/WithPageTracking";
 import { Box } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useIntl } from "react-intl";
+import { useLocation } from "react-router-dom";
 import { Lending, Positions } from "../Homepage/components";
 import CartHome from "./component/CartHome";
 import Introduce from "./component/Introduce";
@@ -12,6 +14,18 @@ import Questions from "./component/Questions";
 
 const HomepageV2 = () => {
   const intl = useIntl();
+  const location = useLocation();
+  useEffect(() => {
+    setTimeout(() => {
+      if (location.search) {
+        const search = location.search.split("=")[1];
+        const target = window.document.getElementById(search);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }, 100);
+  }, []);
   return (
     <Box
       backgroundImage={`url(${homepageBgColer})`}
@@ -38,11 +52,11 @@ const HomepageV2 = () => {
       <Box className="max-w-[1215px] mx-auto xl:px-0 px-4">
         <CartHome />
         <Offer />
-        <Box id="staking">
+        <Box id="Staking">
           <Lending />
         </Box>
 
-        <Box className="mt-[80px]" id="positions">
+        <Box className="pt-[80px]" id="Positions">
           <Positions />
         </Box>
         <div className="flex-col justify-center items-center gap-8 grid py-[120px]">
@@ -51,6 +65,7 @@ const HomepageV2 = () => {
           </div>
           <a
             target="_blank"
+            rel="noreferrer"
             href="https://docs.vibrantx.finance/audit"
             className="flex justify-center"
           >

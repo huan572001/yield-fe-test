@@ -1,13 +1,14 @@
 import { store } from "@/redux/store";
 import defaultList from "@/utils/defaultList.mainnet.json";
 import { BigNumber } from "bignumber.js";
+import { STRATEGY_TYPE } from "./constants";
 import { ITokenInfo } from "./utils.type";
 
 function truncate(
   str: string,
   frontLen: number,
   backLen: number,
-  truncateStr: string
+  truncateStr: string,
 ) {
   if (!str) {
     return "";
@@ -38,10 +39,10 @@ export function truncateAddress(accountAddress: string) {
 }
 
 export function formatDate(originalDateString: string): string {
-  let originalDate = new Date(originalDateString);
+  const originalDate = new Date(originalDateString);
 
-  let day = originalDate.getDate();
-  let monthNames = [
+  const day = originalDate.getDate();
+  const monthNames = [
     "Jan",
     "Feb",
     "Mar",
@@ -55,15 +56,15 @@ export function formatDate(originalDateString: string): string {
     "Nov",
     "Dec",
   ];
-  let month = monthNames[originalDate.getMonth()];
-  let year = originalDate.getFullYear();
-  let hours = originalDate.getHours();
-  let minutes = originalDate.getMinutes();
+  const month = monthNames[originalDate.getMonth()];
+  const year = originalDate.getFullYear();
+  const hours = originalDate.getHours();
+  const minutes = originalDate.getMinutes();
 
-  let newDay = day < 10 ? "0" + day : day;
-  let newMinutes = minutes < 10 ? "0" + minutes : minutes;
+  const newDay = day < 10 ? "0" + day : day;
+  const newMinutes = minutes < 10 ? "0" + minutes : minutes;
 
-  let formattedDateString =
+  const formattedDateString =
     newDay + " " + month + " " + year + " " + hours + ":" + newMinutes;
   return formattedDateString;
 }
@@ -71,19 +72,23 @@ export function formatMonney(number: number): string {
   if (isNaN(number)) {
     return "Invalid input";
   }
-
+  let checkNegative = 1;
+  if (number < 0) {
+    number = number * -1;
+    checkNegative = -1;
+  }
   if (number < 1e3) {
     return number.toFixed(2); // No abbreviation for less than 1000
   } else {
-    var abbreviations = ["K", "M", "B", "T"];
-    var index = 0;
+    const abbreviations = ["K", "M", "B", "T"];
+    let index = 0;
 
     while (number >= 1e3 && index < abbreviations.length - 1) {
       number /= 1e3;
       index++;
     }
 
-    return `${number.toFixed(2)}${abbreviations[index - 1]}`;
+    return `${(number * checkNegative).toFixed(2)}${abbreviations[index - 1]}`;
   }
 }
 
@@ -91,7 +96,7 @@ export const getDecimalAndLogoUrl = (symbol: string) => {
   const cryptoInfo = defaultList.find(
     (crypto) =>
       crypto.symbol.toLocaleUpperCase() === symbol.toLocaleUpperCase() ||
-      crypto.hippo_symbol.toLocaleUpperCase() === symbol.toLocaleUpperCase()
+      crypto.hippo_symbol.toLocaleUpperCase() === symbol.toLocaleUpperCase(),
   );
   if (cryptoInfo) {
     return {
@@ -114,7 +119,7 @@ export const getDecimalAndLogoUrl = (symbol: string) => {
 
 export const calculateValueWithDecimals = (
   value: number | string,
-  decimals: number
+  decimals: number,
 ): string => {
   const valueBigNumber =
     typeof value === "string"
@@ -129,7 +134,7 @@ export const calculateValueWithDecimals = (
 
 export const convertValueToDecimals = (
   value: number | string,
-  decimals: number
+  decimals: number,
 ): string => {
   const valueBigNumber =
     typeof value === "string"
@@ -160,7 +165,7 @@ export const formatLargeNumber = (value: number | string): string => {
 
 export const calculateValue = (
   amount: string | number,
-  price: string | number
+  price: string | number,
 ): string => {
   const amountBN = new BigNumber(amount);
   const priceBN = new BigNumber(price);
@@ -195,13 +200,14 @@ export const multiplyBigNumbers = (num1: string, num2: string): string => {
 };
 
 export const getProtocolNameAndFunc = (
-  protocolName: string
+  protocolName: string,
 ): {
   protocol: string;
   protocolDisplayName: string;
   funcUnstake: string;
   funcUserPosition: string;
   funcClaimRewards: string;
+  funcAddLiquidity: string;
 } => {
   switch (protocolName.toLocaleLowerCase()) {
     case "amnis":
@@ -211,6 +217,7 @@ export const getProtocolNameAndFunc = (
         funcUnstake: "unstake_and_swap",
         funcUserPosition: "get_users_position",
         funcClaimRewards: "",
+        funcAddLiquidity: "",
       };
     case "thala-lsd":
       return {
@@ -219,6 +226,7 @@ export const getProtocolNameAndFunc = (
         funcUnstake: "unstake_and_swap",
         funcUserPosition: "get_users_position",
         funcClaimRewards: "",
+        funcAddLiquidity: "",
       };
     case "aries":
       return {
@@ -227,6 +235,52 @@ export const getProtocolNameAndFunc = (
         funcUnstake: "withdraw",
         funcUserPosition: "get_position",
         funcClaimRewards: "claim_rewards",
+        funcAddLiquidity: "",
+      };
+    case "liquidswap":
+      return {
+        protocol: "liquidswap",
+        protocolDisplayName: "LiquidSwap",
+        funcUnstake: "remove_liquidity",
+        funcUserPosition: "get_position",
+        funcClaimRewards: "claim_rewards",
+        funcAddLiquidity: "",
+      };
+    case "pancake":
+      return {
+        protocol: "pancake",
+        protocolDisplayName: "Pancake",
+        funcUnstake: "remove_liquidity",
+        funcUserPosition: "get_position",
+        funcClaimRewards: "claim_rewards",
+        funcAddLiquidity: "",
+      };
+    case "sushi":
+      return {
+        protocol: "sushi",
+        protocolDisplayName: "Sushi",
+        funcUnstake: "remove_liquidity",
+        funcUserPosition: "get_position",
+        funcClaimRewards: "claim_rewards",
+        funcAddLiquidity: "",
+      };
+    case "thala":
+      return {
+        protocol: "thalaswap",
+        protocolDisplayName: "Thala",
+        funcUnstake: "remove_liquidity",
+        funcUserPosition: "get_position",
+        funcClaimRewards: "claim_rewards",
+        funcAddLiquidity: "",
+      };
+    case "merkle":
+      return {
+        protocol: "merkle",
+        protocolDisplayName: "Merkle",
+        funcUnstake: "withdraw_liquidity",
+        funcUserPosition: "get_position",
+        funcClaimRewards: "claim_rewards",
+        funcAddLiquidity: "add_liquidity",
       };
     default:
       return {
@@ -235,6 +289,7 @@ export const getProtocolNameAndFunc = (
         funcUserPosition: "",
         protocolDisplayName: "",
         funcClaimRewards: "",
+        funcAddLiquidity: "",
       };
   }
 };
@@ -243,7 +298,8 @@ export const getTokenPrice = (tokenAddress: string): string | number => {
   const tokenData = store.getState().strategies.tokensPrice;
   const token = tokenData.find(
     (item) =>
-      item.tokenAddress.toLocaleLowerCase() === tokenAddress.toLocaleLowerCase()
+      item.tokenAddress.toLocaleLowerCase() ===
+      tokenAddress.toLocaleLowerCase(),
   );
 
   if (token) {
@@ -267,7 +323,7 @@ export const getPercentFeeWithProtocol = (protocol: string) => {
 
 export const formatNumberWithDecimal = (
   input: string,
-  maxDecimalPlaces: number
+  maxDecimalPlaces: number,
 ): string => {
   const [integerPart, decimalPart] = input.split(".");
 
@@ -288,16 +344,69 @@ export const keepNumericAndDecimal = (input: string): string => {
 };
 
 export const getTokenInfo = (
-  tokenAddress: `${string}::${string}::${string}`
+  tokenAddress: `${string}::${string}::${string}`,
 ): ITokenInfo => {
   const cryptoInfo = defaultList.find(
     (crypto) =>
       crypto.token_type.type.toLocaleLowerCase() ===
-      tokenAddress.toLocaleLowerCase()
+      tokenAddress.toLocaleLowerCase(),
   );
 
   if (cryptoInfo) {
     return cryptoInfo as ITokenInfo;
   }
   return {} as ITokenInfo;
+};
+
+interface MaxAPRIds {
+  maxLendingIds: string[];
+  maxStakingIds: string[];
+}
+
+export const findMaxAPRIds = (): MaxAPRIds => {
+  let maxLendingAPR = 0;
+  let maxStakingAPR = 0;
+  const maxLendingIds: string[] = [];
+  const maxStakingIds: string[] = [];
+  const data = store.getState().strategies.strategies;
+
+  data.forEach((item) => {
+    const apr = parseFloat(item.apr);
+
+    if (!isNaN(apr)) {
+      if (item.strategyType === STRATEGY_TYPE.LENDING) {
+        if (apr > maxLendingAPR) {
+          maxLendingAPR = apr;
+          maxLendingIds.length = 0; // Clear the array if a new maximum is found
+        }
+        if (apr === maxLendingAPR) {
+          maxLendingIds.push(item.id);
+        }
+      } else if (item.strategyType === STRATEGY_TYPE.STAKING) {
+        if (apr > maxStakingAPR) {
+          maxStakingAPR = apr;
+          maxStakingIds.length = 0; // Clear the array if a new maximum is found
+        }
+        if (apr === maxStakingAPR) {
+          maxStakingIds.push(item.id);
+        }
+      }
+    }
+  });
+
+  return { maxLendingIds, maxStakingIds };
+};
+
+export const formatToLocaleString = (
+  input: string | number,
+  decimal: number,
+): string => {
+  let number: BigNumber;
+  if (typeof input === "string" || typeof input === "number") {
+    number = new BigNumber(input);
+  } else {
+    throw new Error("Input must be a string or a number");
+  }
+
+  return number.toFormat(decimal, BigNumber.ROUND_DOWN);
 };

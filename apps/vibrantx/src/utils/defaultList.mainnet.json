@@ -1597,5 +1597,31 @@
     "permissioned_listing": true,
     "hippo_symbol": "ar-USDC",
     "pancake_symbol": "ar-USDC"
+  },
+  {
+    "name": "Merkle LP",
+    "symbol": "MKLP",
+    "official_symbol": "MKLP",
+    "coingecko_id": "",
+    "decimals": 6,
+    "logo_url": "https://merkle.network/images/logo-s.png",
+    "project_url": "https://ariesmarkets.xyz/",
+    "token_type": {
+      "type": "0x5ae6789dd2fec1a9ec9cccfb3acaf12e93d432f0a3a42c92fe1a9d490b7bbc06::house_lp::MKLP<0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDC>",
+      "account_address": "0x9770fa9c725cbd97eb50b2be5f7416efdfd1f1554beb0750d4dae4c64e860da3",
+      "module_name": "reserve",
+      "struct_name": "MKLP<0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDC>"
+    },
+    "extensions": {
+      "data": [
+        ["lp", "merkle"],
+        ["bridge", "native"]
+      ]
+    },
+    "unique_index": 15342,
+    "source": "native",
+    "permissioned_listing": true,
+    "hippo_symbol": "MKLP",
+    "pancake_symbol": "MKLP"
   }
 ]

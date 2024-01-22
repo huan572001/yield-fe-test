@@ -58,7 +58,7 @@ export const AppButton = styled(ChakraButton)({
   height: "auto",
   borderRadius: "120px",
   minWidth: "90px",
-  fontSize: "16px",
+  fontSize: "14px",
   fontStyle: "normal",
   fontWeight: "600",
   lineHeight: "24px",

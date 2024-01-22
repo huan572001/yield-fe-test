@@ -2,7 +2,7 @@ import iconCoin from "@/assets/Frame_19.svg";
 import logoIcon from "@/assets/LogoNew.svg";
 import menu from "@/assets/menu-01.svg";
 import close from "@/assets/x-close.svg";
-import { optionsDropdownLending, siteConfig } from "@/config/site";
+import { siteConfig } from "@/config/site";
 import { useAppSelector } from "@/hooks/store";
 import { getTokenPrice } from "@/utils/functions";
 import routerLinks from "@/utils/routerLink";
@@ -17,29 +17,26 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const intl = useIntl();
   const [openMenu, setOpenMenu] = useState(false);
-  const [aptosCoin, setAptosCoin] = useState<any>({});
+  const [aptosCoin, setAptosCoin] = useState<string | number>("");
   const { tokensPrice } = useAppSelector((state) => state.strategies);
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
-  console.log(location);
 
   const onPress = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
     const target = window.document.getElementById(
-      e.currentTarget.href.split("#")[1]
+      e.currentTarget.href.split("#")[1],
     );
     if (target) {
       target.scrollIntoView({ behavior: "smooth" });
     }
   };
-  const updateURLParams = (params: any) => {
+  const updateURLParams = (params: string) => {
     if (location.pathname !== "/") {
       navigate(`/?product=${params}`);
     } else {
-      if (optionsDropdownLending.some((e) => e.key === params)) {
-        searchParams.set("product", params);
-        setSearchParams(searchParams);
-      }
+      searchParams.set("product", params);
+      setSearchParams(searchParams);
     }
   };
   useEffect(() => {
@@ -47,7 +44,7 @@ export const Navbar = () => {
   }, [tokensPrice]);
 
   return (
-    <Box className="absolute top-0 w-full">
+    <Box className="absolute top-0 w-full z-50">
       <Box className=" pt-5 px-4">
         <Box className="flex justify-center ">
           <Box className="flex justify-between relative items-center max-w-[1215px] w-full font-semibold text-midnightBlue">

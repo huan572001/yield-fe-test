@@ -1,6 +1,6 @@
 import { LAYOUT_STORAGE_KEY, initialStateLayout } from "@/utils/constants";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useQuery, useQueryClient } from "react-query";
 import { useLocalStorage } from "react-use";
 
 export const useLayout = () => {
@@ -16,9 +16,10 @@ export const useLayout = () => {
     });
   }, [locale, queryClient]);
 
-  const { data } = useQuery([LAYOUT_STORAGE_KEY], {
-    select: (data) => data,
-    initialData: () => locale,
+  const { data } = useQuery({
+    queryKey: [LAYOUT_STORAGE_KEY],
+    queryFn: (data: any) => data,
+    initialData: locale,
     enabled: false,
   });
 

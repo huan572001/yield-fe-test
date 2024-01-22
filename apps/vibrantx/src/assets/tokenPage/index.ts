@@ -1,2 +1,3 @@
 import apt from "@/assets/tokenPage/AptosLogo.svg";
-export { apt };
+import cached from "./cached.svg";
+export { apt, cached };

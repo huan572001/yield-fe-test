@@ -21,9 +21,9 @@ export const ModalUnstake = () => {
   return (
     <Modal isOpen={modalUnstake.isOpen} onClose={handleCloseModal} isCentered>
       <ModalOverlay />
-      <ModalContent className='py-[24px] px-[16px] !rounded-[24px] text-14px '>
+      <ModalContent className="py-[24px] px-[16px] !rounded-[24px] text-14px ">
         <ModalBody px={0}>
-          <Flex flexDirection={"column"} gap={"24px"}>
+          <Flex flexDirection={"column"} gap={"12px"}>
             <FormUnStakePool />
           </Flex>
         </ModalBody>

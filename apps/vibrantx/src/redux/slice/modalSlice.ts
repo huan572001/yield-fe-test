@@ -23,6 +23,14 @@ export interface IAuthState {
     isOpen: boolean;
     strategies: Strategies;
   };
+  modalAddLiquidity: {
+    isOpen: boolean;
+    strategies: Strategies;
+  };
+  modalRemoveLiquidity: {
+    isOpen: boolean;
+    strategies: Strategies;
+  };
   modalSettings: {
     isOpen: boolean;
     strategies: Strategies;
@@ -51,6 +59,14 @@ const initialState: IAuthState = {
     isOpen: false,
     strategies: {} as Strategies,
   },
+  modalAddLiquidity: {
+    isOpen: false,
+    strategies: {} as Strategies,
+  },
+  modalRemoveLiquidity: {
+    isOpen: false,
+    strategies: {} as Strategies,
+  },
   modalSettings: {
     isOpen: false,
     strategies: {} as Strategies,
@@ -69,7 +85,7 @@ export const modalSlice = createSlice({
     },
     setOpenModalDynamically: (
       state,
-      action: PayloadAction<{ isOpen: boolean; component: React.ReactNode }>
+      action: PayloadAction<{ isOpen: boolean; component: React.ReactNode }>,
     ) => {
       state.modal.isOpen = action.payload.isOpen;
       state.modal.component = action.payload.component;
@@ -80,7 +96,7 @@ export const modalSlice = createSlice({
     },
     setOpenModalSupply: (
       state,
-      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>
+      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>,
     ) => {
       state.modalSupply.isOpen = action.payload.isOpen;
       state.modalSupply.strategies = action.payload.strategies;
@@ -91,7 +107,7 @@ export const modalSlice = createSlice({
     },
     setOpenModalWithdraw: (
       state,
-      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>
+      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>,
     ) => {
       state.modalWithdraw.isOpen = action.payload.isOpen;
       state.modalWithdraw.strategies = action.payload.strategies;
@@ -102,7 +118,7 @@ export const modalSlice = createSlice({
     },
     setOpenModalStake: (
       state,
-      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>
+      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>,
     ) => {
       state.modalStake.isOpen = action.payload.isOpen;
       state.modalStake.strategies = action.payload.strategies;
@@ -113,7 +129,7 @@ export const modalSlice = createSlice({
     },
     setOpenModalUnstake: (
       state,
-      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>
+      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>,
     ) => {
       state.modalUnstake.isOpen = action.payload.isOpen;
       state.modalUnstake.strategies = action.payload.strategies;
@@ -122,9 +138,31 @@ export const modalSlice = createSlice({
       state.modalUnstake.isOpen = false;
       state.modalUnstake.strategies = {} as Strategies;
     },
+    setOpenModalAddLiquidity: (
+      state,
+      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>,
+    ) => {
+      state.modalAddLiquidity.isOpen = action.payload.isOpen;
+      state.modalAddLiquidity.strategies = action.payload.strategies;
+    },
+    setCloseModalAddLiquidity: (state) => {
+      state.modalAddLiquidity.isOpen = false;
+      state.modalAddLiquidity.strategies = {} as Strategies;
+    },
+    setOpenModalRemoveLiquidity: (
+      state,
+      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>,
+    ) => {
+      state.modalRemoveLiquidity.isOpen = action.payload.isOpen;
+      state.modalRemoveLiquidity.strategies = action.payload.strategies;
+    },
+    setCloseModalRemoveLiquidity: (state) => {
+      state.modalRemoveLiquidity.isOpen = false;
+      state.modalRemoveLiquidity.strategies = {} as Strategies;
+    },
     setOpenModalSettings: (
       state,
-      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>
+      action: PayloadAction<{ isOpen: boolean; strategies: Strategies }>,
     ) => {
       state.modalSettings.isOpen = action.payload.isOpen;
       state.modalSettings.strategies = action.payload.strategies;
@@ -151,6 +189,10 @@ export const {
   setOpenModalStake,
   setCloseModalUnstake,
   setOpenModalUnstake,
+  setCloseModalAddLiquidity,
+  setOpenModalAddLiquidity,
+  setCloseModalRemoveLiquidity,
+  setOpenModalRemoveLiquidity,
 } = modalSlice.actions;
 
 export default modalSlice.reducer;

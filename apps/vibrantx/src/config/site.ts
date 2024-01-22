@@ -6,18 +6,18 @@ export const siteConfig = {
   navItems: [
     {
       label: "navBar.lending",
-      href: "#lending",
+      href: "#Lending",
       id: "Lending",
     },
     {
       label: "navBar.staking",
-      href: "#staking",
+      href: "#Staking",
       id: "Staking",
     },
     {
       label: "navBar.positions",
-      href: "#positions",
-      id: "positions",
+      href: "#Positions",
+      id: "Positions",
     },
   ],
   navMenuItems: [

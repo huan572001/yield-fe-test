@@ -1,3 +1,16 @@
 export default {
-  "tokenpage.title": "APT Market",
+  "tokenpage.title": "Market",
+  "tokenpage.info.title": "Supply Info",
+  "tokenpage.Supplied": "Supplied",
+  "tokenpage.Liquidity": "Liquidity Available",
+  "tokenpage.Oracle": "Oracle Price",
+  "tokenpage.Stakers": "Stakers",
+  "tokenpage.MySupplied": "My Supplied",
+  "tokenpage.TokenInflow": "Token inflow",
+  "tokenpage.Performance": "Performance",
+  "tokenpage.SupplyCaps": "Supply Caps",
+  "tokenpage.TotalSupplied": "Total Supplied",
+  "tokenpage.SupplyAPY": "Supply APY",
+  "tokenpage.MaxLTV": "Max LTV",
+  "tokenpage.Utilization": "Utilization",
 };
